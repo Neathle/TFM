@@ -1,0 +1,55 @@
+version: '3'
+
+networks:
+  ros:
+    driver: bridge
+
+services:
+  ros-master:
+    image: custom_noetic:latest
+    build: .
+    command: stdbuf -o L roscore
+    networks:
+      - ros
+    restart: always
+
+  rosterm:
+    image: custom_noetic:latest
+    build: .
+    container_name: rosterm
+    depends_on:
+      - ros-master
+    networks:
+      - ros
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+      -  DISPLAY
+      -  NVIDIA_VISIBLE_DEVICES=all
+      -  NVIDIA_DRIVER_CAPABILITIES=all
+      -  QT_X11_NO_MITSHM=1 #fix some QT bugs
+    #share your user to the container in order to access your x11
+    user: ${UGID} #adapt as needed!
+    volumes: 
+      #share your x11 socket and permissions to the container
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ~/.Xauthority:/root/.Xauthority?:ro
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/shadow:/etc/shadow:ro
+      - /etc/sudoers:/etc/sudoers:ro
+      - /etc/sudoers.d:/etc/sudoers.d:ro
+      - /home/${USER}:/home/${USER}:rw #share your home with write permissions
+    restart: always
+    stdin_open: true
+    tty: true
+    privileged: true
+    # devices:
+    #   - "/dev/dri:/dev/dri"
+    #   - "/dev/snd:/dev/snd"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
