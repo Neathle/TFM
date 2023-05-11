@@ -12,6 +12,8 @@ services:
     networks:
       - ros
     restart: always
+    ports:
+      - "11311:11311"
 
   rosterm:
     image: custom_noetic:latest
