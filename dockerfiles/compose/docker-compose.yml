@@ -6,6 +6,7 @@ networks:
 
 services:
   ros-master:
+    container_name: ros-master
     image: custom_noetic:latest
     build: .
     command: stdbuf -o L roscore
@@ -45,9 +46,6 @@ services:
     stdin_open: true
     tty: true
     privileged: true
-    # devices:
-    #   - "/dev/dri:/dev/dri"
-    #   - "/dev/snd:/dev/snd"
     deploy:
       resources:
         reservations:
