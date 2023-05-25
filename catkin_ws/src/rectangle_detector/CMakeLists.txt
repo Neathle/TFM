@@ -11,12 +11,15 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   std_msgs
-  vision_opencv
+  cv_bridge
 )
+
+add_executable(rectdect src/rectdect.cpp)
+target_link_libraries(rectdect ${catkin_LIBRARIES})
 
 find_package(OpenCV)
 include_directories(${OpenCV_INCLUDE_DIRS})
-target_link_libraries(rectangle_detector ${OpenCV_LIBRARIES})
+target_link_libraries(rectdect ${OpenCV_LIBRARIES})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -110,7 +113,7 @@ target_link_libraries(rectangle_detector ${OpenCV_LIBRARIES})
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES rectangle_detector
-#  CATKIN_DEPENDS roscpp sensor_msgs std_msgs vision_opencv
+#  CATKIN_DEPENDS roscpp sensor_msgs std_msgs cv_bridge
 #  DEPENDS system_lib
 )
 
