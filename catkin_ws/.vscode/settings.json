@@ -1,0 +1,4 @@
+{
+    "ros.distro": "noetic",
+    "terminal.integrated.defaultProfile.linux": "bash",
+}

@@ -10,6 +10,12 @@ services:
     image: custom_noetic:latest
     build: .
     command: stdbuf -o L roscore
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
     networks:
       - ros
     restart: always
@@ -17,7 +23,7 @@ services:
       - "11311:11311"
 
   rosterm:
-    image: custom_noetic:latest
+    image: tfm_noetic:latest
     build: .
     container_name: rosterm
     depends_on:
@@ -45,6 +51,10 @@ services:
     restart: always
     stdin_open: true
     tty: true
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
     privileged: true
     deploy:
       resources:

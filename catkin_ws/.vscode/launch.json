@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "ROS: Launch",
+        "type": "ros",
+        "request": "launch",
+        "target": "~/TFM/catkin_ws/src/rectangle_detector/launch/rectangle_detector_minimal.launch",
+      },      
+    ],
+    
+    "inputs": [
+      {
+        "id": "package",
+        "type": "promptString",
+        "description": "Package name",
+        "default": "rectangle_detector"
+      },
+      {
+        "id": "program",
+        "type": "promptString",
+        "description": "Program name",
+        "default": "rectangle_detector_node"
+      }
+    ]
+}

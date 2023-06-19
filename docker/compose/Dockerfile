@@ -7,9 +7,12 @@ RUN apt-get install wget git python-is-python3 python3-pip -y
 RUN apt-get install libopencv-dev python3-opencv -y
 
 RUN apt-get install ros-noetic-vision-opencv -y
+RUN apt-get install libcanberra-gtk-module libcanberra-gtk3-module -y
+RUN apt-get install gdb -y
+
 
 # INITIALIZE ROS
 RUN rosdep fix-permissions && rosdep update
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
-RUN source /opt/ros/noetic/setup.bash
 
+CMD [ "bash" ]

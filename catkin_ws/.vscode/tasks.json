@@ -1,0 +1,29 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Catkin Release",
+            "type": "shell",
+            "command": "source devel/setup.bash && catkin_make && source devel/setup.bash",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true,
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Catkin Debug",
+            "type": "shell",
+            "command": "source devel/setup.bash && catkin_make -DCMAKE_BUILD_TYPE=debug && source devel/setup.bash",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false,
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ]
+}

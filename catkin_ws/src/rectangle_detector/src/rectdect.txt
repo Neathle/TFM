@@ -1,0 +1,92 @@
+#include <opencv2/opencv.hpp>
+#include <opencv2/cudaimgproc.hpp>
+#include <opencv2/cudawarping.hpp>
+#include <ros/ros.h>
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/CameraInfo.h>
+#include <cv_bridge/cv_bridge.h>
+
+using namespace cv;
+using namespace std;
+
+Mat cameraMatrix, distCoeffs;
+Size imageSize;
+
+void cameraInfoCallback(const sensor_msgs::CameraInfoConstPtr& msg)
+{
+    imageSize = Size(msg->width, msg->height);
+    cameraMatrix = Mat(3, 3, CV_64F);
+    for (int i = 0; i < 9; i++)
+        cameraMatrix.at<double>(i / 3, i % 3) = msg->K[i];
+    distCoeffs = Mat(1, 5, CV_64F);
+    for (int i = 0; i < 5; i++)
+        distCoeffs.at<double>(i) = msg->D[i];
+}
+
+void imageCallback(const sensor_msgs::ImageConstPtr& msg)
+{
+    cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "bgr8");
+    Mat image = cv_ptr->image;
+
+    // Undistort the image
+    Mat undistorted;
+    cuda::GpuMat d_src(image), d_dst;
+    cuda::undistort(d_src, d_dst, cameraMatrix, distCoeffs);
+
+    // Convert to grayscale
+    cuda::GpuMat d_gray;
+    cuda::cvtColor(d_dst, d_gray, COLOR_BGR2GRAY);
+
+    // Find edges
+    cuda::GpuMat d_edges;
+    Ptr<cuda::CannyEdgeDetector> canny = cuda::createCannyEdgeDetector(50, 150);
+    canny->detect(d_gray, d_edges);
+
+    // Find line segments using Hough transform
+    vector<Vec4i> lines;
+    Ptr<cuda::HoughSegmentDetector> hough = cuda::createHoughSegmentDetector(1, CV_PI / 180, 50);
+    hough->detect(d_edges, lines);
+
+    // Group line segments into sets of four that form a rectangle
+    vector<vector<Point2f>> rectangles;
+    for (size_t i = 0; i < lines.size(); i++)
+        for (size_t j = i + 1; j < lines.size(); j++)
+            for (size_t k = j + 1; k < lines.size(); k++)
+                for (size_t l = k + 1; l < lines.size(); l++)
+                {
+                    Vec4i l1 = lines[i], l2 = lines[j], l3 = lines[k], l4 = lines[l];
+                    Point2f p1, p2, p3, p4;
+                    if (intersection(l1, l2, p1) && intersection(l2, l3, p2) && intersection(l3, l4, p3) && intersection(l4, l1, p4))
+                        rectangles.push_back({ p1, p2, p3, p4 });
+                }
+
+    // Draw rectangles
+    for (const auto& rectangle : rectangles)
+    {
+        // Draw corners
+        for (const auto& point : rectangle)
+            circle(image, point, 3, Scalar(0, 255, 0), -1);
+
+        // Draw edges
+        for (size_t i = 0; i < rectangle.size(); i++)
+            line(image, rectangle[i], rectangle[(i + 1) % rectangle.size()], Scalar(0, 255, 0), 1);
+    }
+
+    imshow("Image", image);
+}
+
+int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "rectangle_detector");
+    ros::NodeHandle nh;
+
+    ros::Subscriber sub1 = nh.subscribe("/camera/image", 1, imageCallback);
+    ros::Subscriber sub2 = nh.subscribe("/camera/camera_info", 1, cameraInfoCallback);
+
+    namedWindow("Image");
+
+    while (ros::ok())
+        ros::spinOnce();
+
+    return 0;
+}
