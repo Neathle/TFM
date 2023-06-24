@@ -8,7 +8,7 @@
         "name": "ROS: Launch",
         "type": "ros",
         "request": "launch",
-        "target": "~/TFM/catkin_ws/src/rectangle_detector/launch/rectangle_detector_minimal.launch",
+        "target": "${workspaceFolder}/src/rectangle_detector/launch/rectangle_detector_minimal.launch",
       },      
     ],
     
