@@ -4,3 +4,5 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <cv_bridge/cv_bridge.h>
+
+void elongate_lines(std::vector<cv::Vec4f>& lines, float factor);
