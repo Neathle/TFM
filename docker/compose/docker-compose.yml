@@ -7,15 +7,8 @@ networks:
 services:
   ros-master:
     container_name: ros-master
-    image: custom_noetic:latest
-    build: .
+    image: ros:noetic-ros-core
     command: stdbuf -o L roscore
-    stdin_open: true
-    tty: true
-    cap_add:
-      - SYS_PTRACE
-    security_opt:
-      - seccomp:unconfined
     networks:
       - ros
     restart: always
@@ -24,8 +17,14 @@ services:
 
   rosterm:
     image: tfm_noetic:latest
-    build: .
     container_name: rosterm
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        UID: ${UID}
+        GID: ${GID}
+        USER: ${USER}
     depends_on:
       - ros-master
     networks:
@@ -45,8 +44,8 @@ services:
       - /etc/group:/etc/group:ro
       - /etc/passwd:/etc/passwd:ro
       - /etc/shadow:/etc/shadow:ro
-      - /etc/sudoers:/etc/sudoers:ro
-      - /etc/sudoers.d:/etc/sudoers.d:ro
+      # - /etc/sudoers:/etc/sudoers:ro
+      # - /etc/sudoers.d:/etc/sudoers.d:ro
       - /home/${USER}:/home/${USER}:rw #share your home with write permissions
     restart: always
     stdin_open: true

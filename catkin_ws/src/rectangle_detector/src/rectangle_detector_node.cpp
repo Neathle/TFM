@@ -38,17 +38,20 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
     Canny(gray, edges, 50, 150, 3, false);
     // imshow("Image", edges);
     // waitKey();
+    // Create an instance of the LineSegmentDetector class
+    cv::Ptr<cv::LineSegmentDetector> lsd = cv::createLineSegmentDetector();
 
-    // Find line segments using Hough transform
+    // Detect the lines
     vector<Vec4i> lines;
-    HoughLinesP(edges, lines, 1, CV_PI / 180, 50, 50, 15 );
+    lsd->detect(edges, lines);
+    
     ROS_INFO("Found %lu lines", lines.size());
     // vector<vector<Vec2f>> segmented_lines = segment_by_angle_kmeans(lines);
     // vector<Point> intersections = segmented_intersections(segmented_lines);
 
     Mat cdst = Mat::zeros(edges.size(), CV_8UC1);
     cv::RNG rng(12345);
-    cv::Scalar color = cv::Scalar(255);
+    cv::Scalar color = cv::COLOR_WHITE;
     for( size_t i = 0; i < lines.size(); i++ )
     {
         Vec4i l = lines[i];

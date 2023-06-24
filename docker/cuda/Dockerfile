@@ -19,7 +19,7 @@ RUN source /opt/ros/noetic/setup.bash
 RUN rosdep fix-permissions && rosdep init
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 
-RUN apt-get install ros-noetic-vision-opencv -y
+RUN apt-get install ros-noetic-perception -y
 
 CMD [ "bash" ]
 
