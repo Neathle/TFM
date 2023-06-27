@@ -5,15 +5,15 @@ networks:
     driver: bridge
 
 services:
-  ros-master:
-    container_name: ros-master
-    image: ros:noetic-ros-core
-    command: stdbuf -o L roscore
-    networks:
-      - ros
-    restart: always
-    ports:
-      - "11311:11311"
+  # ros-master:
+  #   container_name: ros-master
+  #   image: ros:noetic-ros-core
+  #   command: stdbuf -o L roscore
+  #   networks:
+  #     - ros
+  #   restart: always
+  #   ports:
+  #     - "11311:11311"
 
   rosterm:
     image: tfm_noetic:latest
@@ -25,12 +25,12 @@ services:
         UID: ${UID}
         GID: ${GID}
         USER: ${USER}
-    depends_on:
-      - ros-master
+    # depends_on:
+    #   - ros-master
     networks:
       - ros
     environment:
-      - "ROS_MASTER_URI=http://ros-master:11311"
+      - "ROS_MASTER_URI=http://tiago-162c:11311"
       -  DISPLAY
       -  NVIDIA_VISIBLE_DEVICES=all
       -  NVIDIA_DRIVER_CAPABILITIES=all

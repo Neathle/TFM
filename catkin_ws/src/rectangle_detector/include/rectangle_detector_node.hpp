@@ -87,11 +87,11 @@ RectangleDetectorNode::RectangleDetectorNode()
     im_pub_graph_ = nh_.advertise<sensor_msgs::Image>("/rectangle_detector/graph", 1);
 
     if (intersections_detector_mode_) {
-        im_sub_ = nh_.subscribe("/image_publisher/image_raw", 1, &RectangleDetectorNode::imageCallbackIntersections, this);
+        im_sub_ = nh_.subscribe(image_topic_, 1, &RectangleDetectorNode::imageCallbackIntersections, this);
     }
     else {
         im_pub_rectangles_ = nh_.advertise<sensor_msgs::Image>("/rectangle_detector/rectangles", 1);
-        im_sub_ = nh_.subscribe("/image_publisher/image_raw", 1, &RectangleDetectorNode::imageCallbackTrapezoids, this);
+        im_sub_ = nh_.subscribe(image_topic_, 1, &RectangleDetectorNode::imageCallbackTrapezoids, this);
     }
 }
 
@@ -187,7 +187,7 @@ bool RectangleDetectorNode::isWhiteLine(cv::Point2f p1, cv::Point2f p2)
     int whiteCount = 0;
     for (int i = 0; i < it.count; i++, ++it)
     {
-        if (linesImg.at<uchar>(it.pos()) > 0)
+        if (linesImg.at<uchar>(it.pos()) > 128)
         {
             whiteCount++;
         }
@@ -347,6 +347,7 @@ void RectangleDetectorNode::findIntersections()
 // Function to create a graph where nodes are intersection points and edges are lines that join them
 void RectangleDetectorNode::createGraph()
 {
+    adjacencyMatrix_.clear();
     adjacencyMatrix_.resize(intersections.size(), std::vector<bool>(intersections.size(), false));
     
     for (int i = 0; i < intersections.size(); ++i) {
