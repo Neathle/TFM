@@ -24,6 +24,7 @@ private:
     float rects_min_area_factor_ = 0.001;
     float rects_max_area_factor_ = 0.3;
     int nms_threshold_ = 1;
+    float angle_threshold_ = 0.1;
     int lineImg_drawing_width_ = 2;
     int rectImg_drawing_width_ = 2;
     float whiteness_threshold_ = 0.95;
@@ -38,7 +39,8 @@ private:
     void elongateLines();
     bool isWhiteLine(cv::Point2f p1, cv::Point2f p2);
     bool intersect(cv::Vec4f line1, cv::Vec4f line2, cv::Point2i &int_pt);
-    int  trapezoidArea(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d);
+    bool  trapezoidArea(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d);
+    bool trapezoidAngles(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d);
     bool isConvexTrapezoid(cv::Vec8i trapezoid); //TODO: implement
     void nonMaximumSuppression();
     void reduceSaturationBrightness(float saturationScale, float valueScale);
@@ -81,6 +83,7 @@ RectangleDetectorNode::RectangleDetectorNode()
     nh_.getParam("rectangle_detector/draw_graph", draw_graph_);
     nh_.getParam("rectangle_detector/draw_trapezoids", draw_trapezoids_);
     nh_.getParam("rectangle_detector/whiteness_threshold", whiteness_threshold_);
+    nh_.getParam("rectangle_detector/angle_threshold", angle_threshold_);
 
     //initialize publishers and subscribers
     im_pub_lines_ = nh_.advertise<sensor_msgs::Image>("/rectangle_detector/lines", 1);
@@ -224,9 +227,50 @@ bool RectangleDetectorNode::intersect(cv::Vec4f line1, cv::Vec4f line2, cv::Poin
 
 
 // Function to calculate the area of a trapezoid
-int RectangleDetectorNode::trapezoidArea(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
+bool RectangleDetectorNode::trapezoidArea(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
 {
-    return std::abs((a.x * b.y - a.y * b.x) + (b.x * c.y - b.y * c.x) + (c.x * d.y - c.y * d.x) + (d.x * a.y - d.y * a.x)) / 2;
+    float trapezoid_area = std::abs((a.x * b.y - a.y * b.x) + (b.x * c.y - b.y * c.x) + (c.x * d.y - c.y * d.x) + (d.x * a.y - d.y * a.x)) / 2;
+    // find the perimeter
+    float perimeter = cv::norm(a - b) + cv::norm(b - c) + cv::norm(c - d) + cv::norm(d - a);
+    // find the ratio of the area to the perimeter
+    float ratio = trapezoid_area / perimeter;
+    
+}
+
+// dot product
+float dot(cv::Point2i a, cv::Point2i b)
+{
+    return a.x * b.x + a.y * b.y;
+}
+
+// cross product
+float cross(cv::Point2i a, cv::Point2i b)
+{
+    return a.x * b.y - a.y * b.x;
+}
+
+// Function to check if the angles of a trapezoid are sufficiently close to 90 degrees
+bool RectangleDetectorNode::trapezoidAngles(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
+{
+    // atan2(vectorA.y, vectorA.x) - atan2(vectorB.y,  vectorB.x)
+    float angle1 = std::atan2(b.y - a.y, b.x - a.x) - std::atan2(c.y - b.y, c.x - b.x);
+    if (angle1 < 0) angle1 += 2 * CV_PI;
+    angle1 = std::abs(angle1);
+    // if angle is not between pi/2-angle_threshold_ and pi/2+angle_threshold_ then return false
+    if (angle1 < CV_PI / 2 - angle_threshold_ || angle1 > CV_PI / 2 + angle_threshold_) return false;
+
+    float angle2 = std::atan2(c.y - b.y, c.x - b.x) - std::atan2(d.y - c.y, d.x - c.x);
+    if (angle2 < 0) angle2 += 2 * CV_PI;
+    angle2 = std::abs(angle2);
+    if (angle2 < CV_PI / 2 - angle_threshold_ || angle2 > CV_PI / 2 + angle_threshold_) return false;
+
+    float angle3 = std::atan2(d.y - c.y, d.x - c.x) - std::atan2(a.y - d.y, a.x - d.x);
+    if (angle3 < 0) angle3 += 2 * CV_PI;
+    angle3 = std::abs(angle3);
+    if (angle3 < CV_PI / 2 - angle_threshold_ || angle3 > CV_PI / 2 + angle_threshold_) return false;
+    
+    ROS_INFO("Rectangle angles %f %f %f", angle1, angle2, angle3);
+    return true;
 }
 
 
@@ -358,7 +402,7 @@ void RectangleDetectorNode::createGraph()
             }
         }
     }
-
+    
     if (draw_graph_)
         drawGraph();
 
@@ -388,8 +432,8 @@ void RectangleDetectorNode::extractTrapezoids()
                     if (!adjacencyMatrix_[k][l] || !adjacencyMatrix_[l][i]) continue;
                     
                     int trapezoid_area = trapezoidArea(intersections[i], intersections[j], intersections[k], intersections[l]);
-                    if (trapezoid_area < minArea || trapezoid_area > maxArea) continue;
-
+                    bool trapezoid_angles = trapezoidAngles(intersections[i], intersections[j], intersections[k], intersections[l]);
+                    if (trapezoid_area < minArea || trapezoid_area > maxArea || !trapezoid_angles) continue;
                     trapezoids.push_back(cv::Vec8i(intersections[i].x, intersections[i].y,
                                                     intersections[j].x, intersections[j].y,
                                                     intersections[k].x, intersections[k].y,

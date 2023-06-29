@@ -81,4 +81,16 @@ RUN apt-get update && apt-get install -y python3-catkin-tools
 RUN source /opt/ros/noetic/setup.bash && \
     catkin build -DCATKIN_ENABLE_TESTING=0 -j $(expr `nproc`)
 
+# install foxglove
+WORKDIR /ros2_ws/foxglove
+RUN wget https://github.com/foxglove/studio/releases/download/v1.58.0/foxglove-studio-1.58.0-linux-amd64.deb
+RUN apt-get install -y ./foxglove-studio-1.58.0-linux-amd64.deb
+RUN rm ./foxglove-studio-1.58.0-linux-amd64.deb
+RUN apt-get update && apt-get install -y ros-noetic-foxglove-bridge
+
+# cleanup
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
 CMD [ "bash" ]

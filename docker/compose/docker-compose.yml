@@ -5,15 +5,15 @@ networks:
     driver: bridge
 
 services:
-  # ros-master:
-  #   container_name: ros-master
-  #   image: ros:noetic-ros-core
-  #   command: stdbuf -o L roscore
-  #   networks:
-  #     - ros
-  #   restart: always
-  #   ports:
-  #     - "11311:11311"
+  ros-master:
+    container_name: ros-master
+    image: ros:noetic-ros-core
+    command: stdbuf -o L roscore
+    networks:
+      - ros
+    restart: always
+    ports:
+      - "11311:11311"
 
   rosterm:
     image: tfm_noetic:latest
@@ -25,8 +25,8 @@ services:
         UID: ${UID}
         GID: ${GID}
         USER: ${USER}
-    # depends_on:
-    #   - ros-master
+    depends_on:
+      - ros-master
     networks:
       - ros
     environment:
