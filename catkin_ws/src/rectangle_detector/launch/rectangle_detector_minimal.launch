@@ -3,17 +3,19 @@
 
     <node name="rectangle_detector" pkg="rectangle_detector" type="rectangle_detector_node"  output="screen">
 
-        <param name="image_topic" value="/xtion/rgb/image_rect_color" />
+        <param name="image_topic" value="/camera/color/image_raw" />
         <param name="intersections_detector_mode" value="0" />
 
-        <param name="elongation_factor" value="1.2" />
-        <param name="rects_min_area_factor" value="0.0" />
-        <param name="rects_max_area_factor" value="0.3" />
-        <param name="nms_threshold" value="1" />
+        <param name="elongation_factor" value="1.3" />
+        <param name="rects_min_area_factor" value="0.001" />
+        <param name="rects_max_area_factor" value="0.5" />
+        <param name="nms_threshold" value="5" />
         <param name="lineImg_drawing_width" value="2" />
         <param name="rectImg_drawing_width" value="1" />
-        <param name="whiteness_threshold" value="0.8" />
-        <param name="angle_threshold" value="0.6" />
+        <param name="compactness_threshold" value="0.4" />
+        <param name="length_diff_threshold" value="0.2" />
+        <param name="whiteness_threshold" value="0.7" />
+        <param name="angle_threshold" value="0.5" />
 
         <param name="draw_intersections" value="true" />
         <param name="draw_graph" value="true" />
@@ -21,14 +23,14 @@
 
     </node>
         
-     <!-- <node pkg="image_publisher" type="image_publisher" name="image_publisher" args="/home/neathle/Downloads/pasillo.png" > -->
+    <node pkg="image_publisher" type="image_publisher" name="image_publisher" args="/home/germanvega/Pictures/pasillo.jpg" >
 
-        <!-- <param name="flip_horizontal" value="false" /> -->
-        <!-- <param name="flip_vertical" value="false" /> -->
-        <!-- <param name="frame_id" value="my_camera" /> -->
-        <!-- <param name="publish_rate" value="1" /> -->
+        <param name="flip_horizontal" value="false" />
+        <param name="flip_vertical" value="false" />
+        <param name="frame_id" value="my_camera" />
+        <param name="publish_rate" value="1" />
         <!-- <param name="camera_info_url" value="file://$(env HOME)/.ros/camera_info/camera.yaml" />   -->
 
-    <!-- </node> -->
+    </node>
 
 </launch>

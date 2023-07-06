@@ -23,6 +23,8 @@ private:
     float elongation_factor_ = 1.2;
     float rects_min_area_factor_ = 0.001;
     float rects_max_area_factor_ = 0.3;
+    float compactness_threshold_ = 0.5;
+    float length_diff_threshold_ = 0.1;
     int nms_threshold_ = 1;
     float angle_threshold_ = 0.1;
     int lineImg_drawing_width_ = 2;
@@ -39,8 +41,9 @@ private:
     void elongateLines();
     bool isWhiteLine(cv::Point2f p1, cv::Point2f p2);
     bool intersect(cv::Vec4f line1, cv::Vec4f line2, cv::Point2i &int_pt);
-    bool  trapezoidArea(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d);
-    bool trapezoidAngles(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d);
+    bool trapezoidLineTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d);
+    bool trapezoidAreaTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d, float min_area, float max_area);
+    bool trapezoidAnglesTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d);
     bool isConvexTrapezoid(cv::Vec8i trapezoid); //TODO: implement
     void nonMaximumSuppression();
     void reduceSaturationBrightness(float saturationScale, float valueScale);
@@ -77,6 +80,8 @@ RectangleDetectorNode::RectangleDetectorNode()
     nh_.getParam("rectangle_detector/elongation_factor", elongation_factor_);
     nh_.getParam("rectangle_detector/rects_min_area_factor", rects_min_area_factor_);
     nh_.getParam("rectangle_detector/rects_max_area_factor", rects_max_area_factor_);
+    nh_.getParam("rectangle_detector/compactness_threshold", compactness_threshold_);
+    nh_.getParam("rectangle_detector/length_diff_threshold", length_diff_threshold_);
     nh_.getParam("rectangle_detector/nms_threshold", nms_threshold_);
     nh_.getParam("rectangle_detector/lineImg_drawing_width", lineImg_drawing_width_);
     nh_.getParam("rectangle_detector/rectImg_drawing_width", rectImg_drawing_width_);
@@ -190,7 +195,7 @@ bool RectangleDetectorNode::isWhiteLine(cv::Point2f p1, cv::Point2f p2)
     int whiteCount = 0;
     for (int i = 0; i < it.count; i++, ++it)
     {
-        if (linesImg.at<uchar>(it.pos()) > 128)
+        if (linesImg.at<uchar>(it.pos()) > 64)
         {
             whiteCount++;
         }
@@ -225,16 +230,38 @@ bool RectangleDetectorNode::intersect(cv::Vec4f line1, cv::Vec4f line2, cv::Poin
     return false;
 }
 
-
-// Function to calculate the area of a trapezoid
-bool RectangleDetectorNode::trapezoidArea(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
+// Function to check if the difference between the shortest line and the longest is less than a threshold
+bool RectangleDetectorNode::trapezoidLineTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
 {
-    float trapezoid_area = std::abs((a.x * b.y - a.y * b.x) + (b.x * c.y - b.y * c.x) + (c.x * d.y - c.y * d.x) + (d.x * a.y - d.y * a.x)) / 2;
+    float ab = cv::norm(a - b);
+    float bc = cv::norm(b - c);
+    float cd = cv::norm(c - d);
+    float da = cv::norm(d - a);
+
+    float min_length = std::min(std::min(ab, bc), std::min(cd, da));
+    float max_length = std::max(std::max(ab, bc), std::max(cd, da));
+
+    if (min_length / max_length < length_diff_threshold_) return false;
+
+    return true;
+}
+
+//https://fisherzachary.github.io/public/r-output.html
+// Function to calculate the area of a trapezoid
+bool RectangleDetectorNode::trapezoidAreaTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d, float min_area, float max_area) 
+{
+    float trapezoid_area = std::abs((a.x * b.y - a.y * b.x) + (b.x * c.y - b.y * c.x) + (c.x * d.y - c.y * d.x) + (d.x * a.y - d.y * a.x)) / 2.0;
+    // ROS_INFO("Trapezoid area %f, for %d, %d, %d, %d, %d, %d, %d, %d", trapezoid_area, a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
+    if (trapezoid_area < min_area || trapezoid_area > max_area) return false;
     // find the perimeter
     float perimeter = cv::norm(a - b) + cv::norm(b - c) + cv::norm(c - d) + cv::norm(d - a);
-    // find the ratio of the area to the perimeter
-    float ratio = trapezoid_area / perimeter;
+
+    //Polsby-Popper test
+    float pp = 4.0 * CV_PI * trapezoid_area / (perimeter * perimeter);
+    // ROS_INFO("Polsby-Popper test %f, Area %f, Perimeter %f", pp, trapezoid_area, perimeter);
+    if (pp < compactness_threshold_) return false;
     
+    return true;
 }
 
 // dot product
@@ -250,7 +277,7 @@ float cross(cv::Point2i a, cv::Point2i b)
 }
 
 // Function to check if the angles of a trapezoid are sufficiently close to 90 degrees
-bool RectangleDetectorNode::trapezoidAngles(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
+bool RectangleDetectorNode::trapezoidAnglesTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
 {
     // atan2(vectorA.y, vectorA.x) - atan2(vectorB.y,  vectorB.x)
     float angle1 = std::atan2(b.y - a.y, b.x - a.x) - std::atan2(c.y - b.y, c.x - b.x);
@@ -269,7 +296,7 @@ bool RectangleDetectorNode::trapezoidAngles(cv::Point2i a, cv::Point2i b, cv::Po
     angle3 = std::abs(angle3);
     if (angle3 < CV_PI / 2 - angle_threshold_ || angle3 > CV_PI / 2 + angle_threshold_) return false;
     
-    ROS_INFO("Rectangle angles %f %f %f", angle1, angle2, angle3);
+    // ROS_INFO("Rectangle angles %f %f %f", angle1, angle2, angle3);
     return true;
 }
 
@@ -363,6 +390,9 @@ void RectangleDetectorNode::extractLines()
         cv::line(linesImg, cv::Point(line[0], line[1]), cv::Point(line[2], line[3]), cv::Scalar(255), lineImg_drawing_width_, cv::LINE_AA);
     }
 
+    // Gaussian blur
+    cv::GaussianBlur(linesImg, linesImg, cv::Size(5,5), 0, 0);
+
     ROS_INFO("Extracted %lu lines", lines.size());
 }
 
@@ -406,11 +436,11 @@ void RectangleDetectorNode::createGraph()
     if (draw_graph_)
         drawGraph();
 
-    ROS_INFO("Number of valid lines: %d", 
-        std::accumulate(adjacencyMatrix_.begin(), adjacencyMatrix_.end(), 0, [](int sum, const std::vector<bool>& v) {
-            return sum + std::accumulate(v.begin(), v.end(), 0);
-        }) / 2
-    );
+    // ROS_INFO("Number of valid lines: %d", 
+    //     std::accumulate(adjacencyMatrix_.begin(), adjacencyMatrix_.end(), 0, [](int sum, const std::vector<bool>& v) {
+    //         return sum + std::accumulate(v.begin(), v.end(), 0);
+    //     }) / 2
+    // );
 }
 
 
@@ -418,8 +448,8 @@ void RectangleDetectorNode::createGraph()
 void RectangleDetectorNode::extractTrapezoids()
 {
     trapezoids.clear();
-    int minArea = rects_min_area_factor_ * image.cols * image.rows;
-    int maxArea = rects_max_area_factor_ * image.cols * image.rows;
+    int min_area = rects_min_area_factor_ * image.cols * image.rows;
+    int max_area = rects_max_area_factor_ * image.cols * image.rows;
 
     for (int i = 0; i < intersections.size(); ++i) {
         for (int j = i + 1; j < intersections.size(); ++j) {
@@ -431,10 +461,11 @@ void RectangleDetectorNode::extractTrapezoids()
                 for (int l = k + 1; l < intersections.size(); ++l) {
                     if (!adjacencyMatrix_[k][l] || !adjacencyMatrix_[l][i]) continue;
                     
-                    int trapezoid_area = trapezoidArea(intersections[i], intersections[j], intersections[k], intersections[l]);
-                    bool trapezoid_angles = trapezoidAngles(intersections[i], intersections[j], intersections[k], intersections[l]);
-                    if (trapezoid_area < minArea || trapezoid_area > maxArea || !trapezoid_angles) continue;
-                    trapezoids.push_back(cv::Vec8i(intersections[i].x, intersections[i].y,
+                    if (!trapezoidLineTest(intersections[i], intersections[j], intersections[k], intersections[l])) continue;
+                    if (!trapezoidAreaTest(intersections[i], intersections[j], intersections[k], intersections[l], min_area, max_area)) continue;
+                    if (!trapezoidAnglesTest(intersections[i], intersections[j], intersections[k], intersections[l])) continue;
+                    // if (!cv::isContourConvex(std::vector<cv::Point2i>{intersections[i], intersections[j], intersections[k], intersections[l]})) continue;
+                    trapezoids.emplace_back(cv::Vec8i(intersections[i].x, intersections[i].y,
                                                     intersections[j].x, intersections[j].y,
                                                     intersections[k].x, intersections[k].y,
                                                     intersections[l].x, intersections[l].y));

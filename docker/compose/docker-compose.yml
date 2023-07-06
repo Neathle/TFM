@@ -30,7 +30,7 @@ services:
     networks:
       - ros
     environment:
-      - "ROS_MASTER_URI=http://tiago-162c:11311"
+      - "ROS_MASTER_URI=http://ros-master:11311"
       -  DISPLAY
       -  NVIDIA_VISIBLE_DEVICES=all
       -  NVIDIA_DRIVER_CAPABILITIES=all
@@ -47,8 +47,16 @@ services:
       # - /etc/sudoers:/etc/sudoers:ro
       # - /etc/sudoers.d:/etc/sudoers.d:ro
       - /home/${USER}:/home/${USER}:rw #share your home with write permissions
+      - /dev:/dev
+    device_cgroup_rules:
+      - 'c 81:* rmw'
+      - 'c 505:* rmw'
+      - 'c 700:* rmw'
     restart: always
     stdin_open: true
+    # ports:
+      # - "192.168.1.101:1510:1510/udp"
+      # - "192.168.1.101:1511:1511/udp"
     tty: true
     cap_add:
       - SYS_PTRACE

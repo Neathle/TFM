@@ -52,4 +52,5 @@ CATKIN_IGNORE
 /catkin_ws/.catkin_tools
 
 # VSCode
-/.vscode
+/.vscode/
+/rosbags/
