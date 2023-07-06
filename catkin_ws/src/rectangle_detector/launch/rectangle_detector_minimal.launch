@@ -3,18 +3,18 @@
 
     <node name="rectangle_detector" pkg="rectangle_detector" type="rectangle_detector_node"  output="screen">
 
-        <param name="image_topic" value="/camera/color/image_raw" />
+        <param name="image_topic" value="/xtion/rgb/image_rect_color" />
         <param name="intersections_detector_mode" value="0" />
 
-        <param name="elongation_factor" value="1.3" />
-        <param name="rects_min_area_factor" value="0.001" />
-        <param name="rects_max_area_factor" value="0.5" />
-        <param name="nms_threshold" value="5" />
-        <param name="lineImg_drawing_width" value="2" />
+        <param name="elongation_factor" value="1.1" />
+        <param name="rects_min_area_factor" value="0.0005" />
+        <param name="rects_max_area_factor" value="0.8" />
+        <param name="nms_threshold" value="4" />
+        <param name="lineImg_drawing_width" value="1" />
         <param name="rectImg_drawing_width" value="1" />
         <param name="compactness_threshold" value="0.4" />
-        <param name="length_diff_threshold" value="0.2" />
-        <param name="whiteness_threshold" value="0.7" />
+        <param name="length_diff_threshold" value="0.3" />
+        <param name="whiteness_threshold" value="0.4" />
         <param name="angle_threshold" value="0.5" />
 
         <param name="draw_intersections" value="true" />

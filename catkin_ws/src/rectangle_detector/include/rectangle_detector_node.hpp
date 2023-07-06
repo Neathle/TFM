@@ -32,7 +32,14 @@ private:
     float whiteness_threshold_ = 0.95;
 
     cv::RNG rng_ = cv::RNG(0xFFFFFFFF);
-    cv::Ptr<cv::ximgproc::FastLineDetector> fld = cv::ximgproc::createFastLineDetector();
+    cv::Ptr<cv::ximgproc::FastLineDetector> fld = cv::ximgproc::createFastLineDetector(
+        8, //length_threshold
+        1.41421356f, //distance_threshold
+        50, //canny_th1
+        150, //canny_th2
+        3, //canny_aperture_size
+        false //do_merge
+    );
     std::vector<std::vector<bool>> adjacencyMatrix_;
 
     void imageCallbackTrapezoids(const sensor_msgs::ImageConstPtr& msg);
@@ -310,10 +317,19 @@ void RectangleDetectorNode::nonMaximumSuppression()
         if (suppressed[i]) continue;
 
         filteredIntersections.push_back(intersections[i]);
+        std::vector<cv::Point2i> closeIntersections;
         for (int j = i + 1; j < intersections.size(); ++j) {
             if (cv::norm(intersections[i] - intersections[j]) < nms_threshold_) {
                 suppressed[j] = true;
+                closeIntersections.push_back(intersections[j]);
             }
+        }
+
+        if (closeIntersections.size() > 0) {
+            cv::Point2i avgIntersection = std::accumulate(closeIntersections.begin(), closeIntersections.end(), intersections[i]);
+            avgIntersection.x /= closeIntersections.size() + 1;
+            avgIntersection.y /= closeIntersections.size() + 1;
+            filteredIntersections.back() = avgIntersection;
         }
     }
 
@@ -378,6 +394,8 @@ void RectangleDetectorNode::drawTrapezoids()
 // Function to extract lines from an image using FLD
 void RectangleDetectorNode::extractLines()
 {
+    cv::normalize(gray, gray, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+
     lines.clear();
 
     fld->detect(gray, lines);
