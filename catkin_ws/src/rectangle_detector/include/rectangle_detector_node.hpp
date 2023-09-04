@@ -32,14 +32,7 @@ private:
     float whiteness_threshold_ = 0.95;
 
     cv::RNG rng_ = cv::RNG(0xFFFFFFFF);
-    cv::Ptr<cv::ximgproc::FastLineDetector> fld = cv::ximgproc::createFastLineDetector(
-        8, //length_threshold
-        1.41421356f, //distance_threshold
-        50, //canny_th1
-        150, //canny_th2
-        3, //canny_aperture_size
-        false //do_merge
-    );
+    cv::Ptr<cv::ORB> orb = cv::ORB::create(1000, 1.2f, 8, 100);
     std::vector<std::vector<bool>> adjacencyMatrix_;
 
     void imageCallbackTrapezoids(const sensor_msgs::ImageConstPtr& msg);
@@ -66,10 +59,14 @@ private:
 public:
     std::vector<cv::Vec4f> lines;
     std::vector<cv::Point2i> intersections;
+    std::vector<cv::KeyPoint> keypoints;
+    cv::Mat descriptors;
     std::vector<cv::Vec8i> trapezoids;
 
     cv::Mat image;
     cv::Mat gray;
+    // cv::Mat grayFloat;
+    // cv::Mat mask;
     cv::Mat linesImg;
     cv::Mat graphImg;
 
@@ -158,8 +155,8 @@ void RectangleDetectorNode::imageCallbackTrapezoids(const sensor_msgs::ImageCons
     
     extractLines();
     findIntersections();
-    createGraph();
-    extractTrapezoids();
+    // createGraph();
+    // extractTrapezoids();
 
     //publish images
     im_pub_lines_.publish(cv_bridge::CvImage(std_msgs::Header(), "mono8", linesImg).toImageMsg());
@@ -170,7 +167,6 @@ void RectangleDetectorNode::imageCallbackTrapezoids(const sensor_msgs::ImageCons
     if (draw_trapezoids_)
         im_pub_rectangles_.publish(cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg());
 }
-
 
 // Function to increase the length of the lines
 void RectangleDetectorNode::elongateLines()
@@ -194,7 +190,6 @@ void RectangleDetectorNode::elongateLines()
     }
 }
 
-
 // Function to check if a line is sufficiently white
 bool RectangleDetectorNode::isWhiteLine(cv::Point2f p1, cv::Point2f p2)
 {
@@ -209,7 +204,6 @@ bool RectangleDetectorNode::isWhiteLine(cv::Point2f p1, cv::Point2f p2)
     }
     return (whiteCount >= it.count * whiteness_threshold_);
 }
-
 
 // Function to check if two line segments intersect
 bool RectangleDetectorNode::intersect(cv::Vec4f line1, cv::Vec4f line2, cv::Point2i &int_pt)
@@ -307,7 +301,6 @@ bool RectangleDetectorNode::trapezoidAnglesTest(cv::Point2i a, cv::Point2i b, cv
     return true;
 }
 
-
 // Function to remove close intersections
 void RectangleDetectorNode::nonMaximumSuppression() 
 {
@@ -336,7 +329,6 @@ void RectangleDetectorNode::nonMaximumSuppression()
     intersections = filteredIntersections;
 }
 
-
 // Function to reduce the saturation and brightness of an image
 void RectangleDetectorNode::reduceSaturationBrightness(float saturationScale, float valueScale)
 {
@@ -352,7 +344,6 @@ void RectangleDetectorNode::reduceSaturationBrightness(float saturationScale, fl
     cv::merge(channels, hsvImage);
     cv::cvtColor(hsvImage, image, cv::COLOR_HSV2BGR);
 }
-
 
 // Function to draw the Graph
 void RectangleDetectorNode::drawGraph()
@@ -374,7 +365,6 @@ void RectangleDetectorNode::drawGraph()
     }
 }
 
-
 // Function to draw the trapezoids
 void RectangleDetectorNode::drawTrapezoids()
 {   
@@ -394,47 +384,44 @@ void RectangleDetectorNode::drawTrapezoids()
 // Function to extract lines from an image using FLD
 void RectangleDetectorNode::extractLines()
 {
-    cv::normalize(gray, gray, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+    // Remove noise by blurring with a Gaussian filter
+    cv::GaussianBlur(gray, gray, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
 
-    lines.clear();
+    // Generate grad_x and grad_y
+    cv::Mat grad_x, grad_y;
+    cv::Mat abs_grad_x, abs_grad_y;
 
-    fld->detect(gray, lines);
+    // Gradient X
+    cv::Sobel(gray, grad_x, CV_8U, 1, 0, 3, 1, 0, cv::BORDER_DEFAULT);
+    cv::convertScaleAbs(grad_x, abs_grad_x);
 
-    elongateLines();
+    // Gradient Y
+    cv::Sobel(gray, grad_y, CV_8U, 0, 1, 3, 1, 0, cv::BORDER_DEFAULT);
+    cv::convertScaleAbs(grad_y, abs_grad_y);
 
-    // Paint the lines on the black image
-    for (const cv::Vec4f &line : lines)
-    {
-        cv::line(linesImg, cv::Point(line[0], line[1]), cv::Point(line[2], line[3]), cv::Scalar(255), lineImg_drawing_width_, cv::LINE_AA);
-    }
+    // Total Gradient (approximate)
+    cv::addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, linesImg);
 
-    // Gaussian blur
-    cv::GaussianBlur(linesImg, linesImg, cv::Size(5,5), 0, 0);
+    // linesImg.convertTo(mask, CV_32F);
+    // gray.convertTo(grayFloat, CV_32F);
+    // mask.setTo(cv::Scalar(255.0));
 
-    ROS_INFO("Extracted %lu lines", lines.size());
+    // cv::multiply(mask,grayFloat,grayFloat);
+    // grayFloat = grayFloat / 255.0;
+    // grayFloat.convertTo(linesImg, CV_8UC1);
 }
-
 
 // Function to find all the intersection points between a set of lines
 void RectangleDetectorNode::findIntersections()
 {
-    intersections.clear();
-    for (size_t i = 0; i < lines.size(); i++)
-    {
-        for (size_t j = i + 1; j < lines.size(); j++)
-        {
-            cv::Point2i intersection;
-            if (intersect(lines[i], lines[j], intersection))
-                intersections.push_back(intersection);
-        }
-    }
+    // orb->detect(gray,keypoints,linesImg);
+    // orb->compute(gray,keypoints,descriptors);
+    orb->detectAndCompute(gray,linesImg,keypoints,descriptors);
+    cv::cvtColor(gray,graphImg,cv::COLOR_GRAY2BGR);
+    cv::drawKeypoints(graphImg, keypoints, graphImg, cv::Scalar(255,0,0), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
-    if (nms_threshold_ > 1)
-        nonMaximumSuppression();
-
-    ROS_INFO("Found %lu intersections", intersections.size());
+    ROS_INFO("Found %lu intersections", keypoints.size());
 }
-
 
 // Function to create a graph where nodes are intersection points and edges are lines that join them
 void RectangleDetectorNode::createGraph()
@@ -460,7 +447,6 @@ void RectangleDetectorNode::createGraph()
     //     }) / 2
     // );
 }
-
 
 // Function to extract all possible trapezoids from a graph
 void RectangleDetectorNode::extractTrapezoids()

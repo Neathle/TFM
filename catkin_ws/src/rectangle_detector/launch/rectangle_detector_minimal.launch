@@ -3,7 +3,7 @@
 
     <node name="rectangle_detector" pkg="rectangle_detector" type="rectangle_detector_node"  output="screen">
 
-        <param name="image_topic" value="/xtion/rgb/image_rect_color" />
+        <param name="image_topic" value="/image_publisher/image_raw" />
         <param name="intersections_detector_mode" value="0" />
 
         <param name="elongation_factor" value="1.1" />
@@ -23,7 +23,7 @@
 
     </node>
         
-    <node pkg="image_publisher" type="image_publisher" name="image_publisher" args="/home/germanvega/Pictures/pasillo.jpg" >
+    <node pkg="image_publisher" type="image_publisher" name="image_publisher" args="/home/neathle/Downloads/pasillo.jpg" >
 
         <param name="flip_horizontal" value="false" />
         <param name="flip_vertical" value="false" />
