@@ -32,7 +32,7 @@ private:
     float whiteness_threshold_ = 0.95;
 
     cv::RNG rng_ = cv::RNG(0xFFFFFFFF);
-    cv::Ptr<cv::ORB> orb = cv::ORB::create(1000, 1.2f, 8, 100);
+    cv::Ptr<cv::AKAZE> akaze = cv::AKAZE::create();
     std::vector<std::vector<bool>> adjacencyMatrix_;
 
     void imageCallbackTrapezoids(const sensor_msgs::ImageConstPtr& msg);
@@ -416,7 +416,7 @@ void RectangleDetectorNode::findIntersections()
 {
     // orb->detect(gray,keypoints,linesImg);
     // orb->compute(gray,keypoints,descriptors);
-    orb->detectAndCompute(gray,linesImg,keypoints,descriptors);
+    akaze->detectAndCompute(gray,linesImg,keypoints,descriptors);
     cv::cvtColor(gray,graphImg,cv::COLOR_GRAY2BGR);
     cv::drawKeypoints(graphImg, keypoints, graphImg, cv::Scalar(255,0,0), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
