@@ -414,8 +414,6 @@ void RectangleDetectorNode::extractLines()
 // Function to find all the intersection points between a set of lines
 void RectangleDetectorNode::findIntersections()
 {
-    // orb->detect(gray,keypoints,linesImg);
-    // orb->compute(gray,keypoints,descriptors);
     akaze->detectAndCompute(gray,linesImg,keypoints,descriptors);
     cv::cvtColor(gray,graphImg,cv::COLOR_GRAY2BGR);
     cv::drawKeypoints(graphImg, keypoints, graphImg, cv::Scalar(255,0,0), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
