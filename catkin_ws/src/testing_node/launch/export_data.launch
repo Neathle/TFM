@@ -1,0 +1,10 @@
+<launch>	
+	<!-- Launch testing_node -->
+    <arg name="scenario"      default="none" />
+    <arg name="file_name"      default="prueba" />
+	
+	<node pkg="testing_node" type="export_data.py" name="testing_node" output="screen">
+	<param name="file_name"      value="$(arg file_name)"/>
+	<param name="scenario"      value="$(arg scenario)"/>
+	</node>	
+</launch>

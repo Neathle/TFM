@@ -1,0 +1,6 @@
+<launch>	
+	<!-- Launch testing_node -->
+	<node pkg="marker_map_creator" type="detectorSIFT_selectMarkers.py" name="detectorSIFT_selectMarkers" output="screen">
+	<param name="img_topic"    value="/camera/RGB1/Image" />
+	</node>	
+</launch>

@@ -92,28 +92,6 @@ RUN apt-get update && apt-get install ros-noetic-realsense2-camera ros-noetic-re
 RUN curl -o /etc/udev/rules.d/99-realsense-libusb.rules https://raw.githubusercontent.com/IntelRealSense/librealsense/master/config/99-realsense-libusb.rules
 RUN curl -o /etc/udev/rules.d/99-realsense-d4xx-mipi-dfu.rules https://github.com/IntelRealSense/librealsense/blob/master/config/99-realsense-d4xx-mipi-dfu.rules
 
-# install opencl
-RUN apt-get update && apt-get install -y \
-    apt-utils \
-    unzip \
-    tar \
-    curl \
-    xz-utils \
-    ocl-icd-libopencl1 \
-    opencl-headers \
-    clinfo \
-    ;
-
-RUN mkdir -p /etc/OpenCL/vendors && \
-    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
-
-# install rectangle detector
-
-WORKDIR /rectdect
-RUN git clone https://github.com/shibatch/rectdetect.git
-WORKDIR /rectdect/build
-RUN cmake .. && make
-
 
 # cleanup
 RUN apt-get clean && \

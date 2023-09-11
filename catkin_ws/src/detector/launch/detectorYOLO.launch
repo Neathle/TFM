@@ -1,0 +1,10 @@
+<launch>	
+	<!-- Launch detector YOLO -->
+	<node pkg="detector" type="detectorYOLO.py" name="detectorYOLO" output="screen">
+	
+	<param name="yolo_msg_topic" value="/darknet_ros/bounding_boxes" />
+	<param name="yolo_img_topic" value="/camera/RGB/Image" />
+	<param name="detection_msg_publish_topic"    value="/camera_link" />
+	
+	</node>	
+</launch>

@@ -6,7 +6,9 @@
                 "${workspaceFolder}/**",
                 "/opt/ros/noetic/include/**",
                 "/usr/include/opencv4/**",
-                "${workspaceFolder}/src/rectangle_detector/include/**"
+                "${workspaceFolder}/src/rectangle_detector/include/**",
+                "${workspaceFolder}/src/amcl_hybrid/amcl_hybrid/include/**",
+                "${workspaceFolder}/src/amcl_hybrid/detector/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

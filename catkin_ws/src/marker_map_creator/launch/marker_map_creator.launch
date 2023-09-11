@@ -1,0 +1,23 @@
+<launch>	
+	<arg name="scenario" default="rx2" />
+	
+    <node pkg="marker_map_creator" type="marker_map_creator.py" name="marker_map_creator" output="screen">
+	<param name= "input_data_folder"   value="/home/fer/catkin_ws/src/amcl_hybrid/marker_map_creator/1_input_data/$(arg scenario)/" />
+    <param name= "output_map_path"    value="/home/fer/catkin_ws/src/amcl_hybrid/marker_map_creator/2_output_map/$(arg scenario)/" />
+   
+   <param name= "input_depth_bag"              value="/home/fer/.ros/rgbd1_depth_$(arg scenario).bag" />
+   <param name= "input_depth_img_topic"    value="/camera/RGB1/Image" />
+
+    <param name= "input_gtruth_bag"    value="/home/fer/.ros/groundtruth_path_$(arg scenario).bag" />
+    </node>
+	
+	<!-- Launch Map-->
+    <arg name="map_file"    default="$(arg scenario).yaml"                                               />
+    <arg name="map_path" default="/home/fer/catkin_ws/src/rodaad/maps/$(arg scenario)/"  />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_path)$(arg map_file)" />
+	
+	<!-- Launch Rviz -->
+	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/fer/catkin_ws/src/amcl_hybrid/marker_map_creator/markers_map.rviz">
+	</node>
+	
+</launch>

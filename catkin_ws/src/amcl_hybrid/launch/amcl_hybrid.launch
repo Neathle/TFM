@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="scenario"             default="pare" />
+    <arg name="thresh"                 default="bin" />
+    <arg name="delay"                   default="2.176" />
+    <arg name="num_markers"      default="1" />
+    <arg name="file_num"      default="0" />
+
+	<!--1. Launch Map-->
+    <arg name="map_file"    default="$(arg scenario).yaml"                                               />
+    <arg name="map_path" default="/home/fer/catkin_ws/src/rodaad/maps/$(arg scenario)/"  />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_path)$(arg map_file)" />
+	
+	<!--2. Set simulation time to synchronize bag files and node data-->
+	<param name="/use_sim_time" type="bool" value="true"/>
+	
+	<!--3. Launch Rviz -->
+	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/fer/catkin_ws/src/amcl_hybrid/run_amcl/test_amcl.rviz">
+	</node>
+	
+	<!--4. Launch Marker visualizations -->
+    <node pkg="marker_map_creator" type="marker_map_creator.py" name="marker_map_creator" output="screen">
+	<param name= "input_data_folder"   value="/home/fer/catkin_ws/src/amcl_hybrid/marker_map_creator/1_input_data/$(arg scenario)/$(arg thresh)/m$(arg num_markers)/" />
+    <param name= "output_map_path"    value="/home/fer/catkin_ws/src/amcl_hybrid/marker_map_creator/2_output_map/$(arg scenario)/" />
+   <param name= "input_depth_bag"              value="/home/fer/.ros/rgbd1_depth_$(arg scenario).bag" />
+   <param name= "input_depth_img_topic"    value="/camera/RGB1/Image" />
+    <param name= "input_gtruth_bag"    value="/home/fer/.ros/groundtruth_path_$(arg scenario).bag" />
+    </node>
+
+	<!--5. Launch Export Data from testing node -->
+	<node pkg="testing_node" type="export_data.py" name="testing_node_export_data" output="screen">
+	<param name="file_name"      value="$(arg scenario)_test$(arg file_num)"/>
+	<param name="scenario"      value="$(arg scenario)/$(arg thresh)/m$(arg num_markers)"/> <!--este param solo se usa en el script para darle nombre al output folder-->
+	</node>                                                                                       <!--por lo tanto se puede modificar al nombre que se quiera pal folder-->		
+		
+	<!--6. Play odom-gtruth rosbag-->
+	<arg name="file1" default="groundtruth_amcl_path_$(arg scenario)"/>
+	<arg name="file2" default="odom5_$(arg scenario)"/>
+	<arg name="path" default="/home/fer/.ros/"/>
+	<node name="gtruth_odom_bagplayer" pkg="rosbag" type="play" output="screen" args="--clock $(arg path)$(arg file1).bag $(arg path)$(arg file2).bag" />
+	
+	<!--7. Play virtual laser rosbag (it has diff timestamps than the odom and gtruth bags, i.e. a different clock, so it needs to be played separetely)-->                                                                    
+	<arg name="file3" default="virtual_laser_$(arg scenario)"/>                                                                                           
+	<node name="virtual_laser_bagplayer" pkg="rosbag" type="play" output="screen" args="$(arg path)$(arg file3).bag" />		
+
+	<!--8. Launch Detector Node-->
+	<node pkg="detector" type="detectorSIFT.py" name="detectorSIFT" output="screen">
+	<param name="markers_path" value="/home/fer/catkin_ws/src/amcl_hybrid/detector/markers/$(arg scenario)/$(arg thresh)/m$(arg num_markers)/" />
+	<param name="export_path" value="/home/fer/catkin_ws/src/amcl_hybrid/detector/markers/" />
+	<param name="img_topic"    value="/camera/RGB1/Image" />
+	<param name="detection_msg_publish_topic"    value="/camera_link" />
+	<param name="thresh_bin"    value="$(arg thresh)" />	 <!-- bin or bin_inv -->
+	</node>			
+
+	<!--9. Play Image rosbags -->                                                                                                                        
+	<arg name="file4" default="rgbd1_img_$(arg scenario)"/>                                                        
+	<node name="rgbd1_img_bagplayer" pkg="rosbag" type="play" output="screen" args=" $(arg path)$(arg file4).bag" launch-prefix="bash -c 'sleep $(arg delay); $0 $@' " />
+
+	<!--10. Run AMCL node to visualize estimated path -->
+	<node pkg="run_amcl" type="run_amcl" name="run_amcl" output="screen">
+	</node>
+	
+	<!--11. Configue Hybrid parameters maps, tfs and topics  -->  
+    <arg name="markers_file_name" default="markers_map_$(arg scenario)_$(arg thresh)_m$(arg num_markers)"/>
+    <arg name="marker_positions_file" default="$(find amcl_hybrid)/maps/$(arg markers_file_name).yml" />
+
+    <arg name="cameras_file_name" default="cameras"/>
+    <arg name="cameras_positions_file" default="$(find amcl_hybrid)/maps/$(arg cameras_file_name).yaml" />
+    <arg name="scan_topic" default="laser"/>
+
+    <arg name="odom_topic" default="odom"/>
+    <arg name="base_frame_robot" default="base_link"/>
+    <arg name="global_frame" default="map"/>
+    <arg name="camera_link" default="camera/RGB1/Image"/>
+    <arg name="camera_topic" default="camera/RGB1/camera_info"/>
+
+    <arg name="topic_output_video" default="image_converter/output_video"/>
+    <arg name="topic_marker" default="detected_markers"/>   
+
+    <arg name="initial_pose_x" default="0.0"/>
+    <arg name="initial_pose_y" default="0.0"/>
+    <arg name="initial_pose_a" default="0.0"/>
+    <arg name="height_pos_camera_link" default="-0.0001"/> <!-- If you put value -0.0001, this variable will be calculated using tf topic -->
+
+	<!--12. Launch AMCL Hybrid-->  
+    <node pkg="amcl_hybrid" type="amcl_hybrid" name="amcl_hybrid" respawn="false" output="screen" >
+        <param name="initial_pose_x"    value="$(arg initial_pose_x)"/>
+        <param name="initial_pose_y"    value="$(arg initial_pose_y)"/>
+        <param name="initial_pose_a"    value="$(arg initial_pose_a)"/>
+
+        <!-- Publish scans from best pose at a max of 10 Hz -->
+        <param name="odom_model_type" value="diff"/>
+        <param name="odom_alpha5" value="0.1"/>
+        <param name="transform_tolerance" value="0.2" />
+        <param name="gui_publish_rate" value="10.0"/>
+        <param name="laser_max_beams" value="30"/>
+        <param name="min_particles" value="500"/>
+        <param name="max_particles" value="5000"/>
+        <param name="kld_err" value="0.05"/>
+        <param name="kld_z" value="0.99"/>
+        <param name="odom_alpha1" value="0.2"/>
+        <param name="odom_alpha2" value="0.2"/>
+        <!-- translation std dev, m -->
+        <remap from="scan" to="$(arg scan_topic)"/>
+        <param name="odom_alpha3" value="0.8"/>
+        <param name="odom_alpha4" value="0.2"/>
+        <param name="laser_z_hit" value="0.5"/>
+        <param name="laser_z_short" value="0.05"/>
+        <param name="laser_z_max" value="0.05"/>
+        <param name="laser_z_rand" value="0.5"/>
+        <param name="laser_sigma_hit" value="0.1"/>
+        <param name="laser_lambda_short" value="0.1"/>
+        <param name="laser_lambda_short" value="0.1"/>
+        <param name="laser_model_type" value="likelihood_field"/>
+        <param name="laser_likelihood_max_dist" value="2.0"/>
+        <param name="update_min_d" value="0.2"/>
+        <param name="update_min_a" value="0.5"/>
+        <param name="resample_interval" value="1"/>
+        <param name="transform_tolerance" value="0.1"/>
+        <param name="recovery_alpha_slow" value="0.0"/>
+        <param name="recovery_alpha_fast" value="0.0"/>
+        <!-- <param name="laser_max_range" value="10.0"/>
+        <param name="laser_min_range" value="0.08"/>-->
+
+        <!--for MARKER PF-->
+        <rosparam command="load" file="$(arg marker_positions_file)"/> <!-- load the marker positions -->
+        <rosparam command="load" file="$(arg cameras_positions_file)"/> <!-- load the cameras positions -->
+        <!--<param name="IMAGE_WIDTH" value= "$(arg width_image)" />
+        <param name="IMAGE_HEIGHT" value= "$(arg height_image)" />-->
+        <!--param name="MARKER_HEIGHT" value = "$(arg height_marker)" />
+        <param name="MARKER_WIDTH" value = "$(arg width_marker)" / -->
+        <param name="NUM_CAM" value ="1" /> <!-- Only work with 1 camera, do not change it-->
+        <param name = "marker_model_type" value="observation_likelihood"/>
+
+        <param name="use_map_topic" value="true"/>
+        <param name="marker_z_hit" value="0.995"/>
+        <param name="marker_z_rand" value ="0.005"/>
+        <param name="marker_sigma_hit" value="100"/>
+        <param name="marker_landa" value="2"/>
+        <param name="base_frame_id" value="$(arg base_frame_robot)" /> 
+        <param name="odom_frame_id" value="$(arg odom_topic)"/>
+        <param name="global_frame_id" value="$(arg global_frame)"/>
+        <param name="camera_topic" value="$(arg camera_topic)"/>
+        <param name="height_pos_camera_link" value="$(arg height_pos_camera_link)"/>
+        <param name="camera_link" value="$(arg camera_link)"/>
+        <param name="topic_output_video" value="$(arg topic_output_video)"/>
+        <param name="topic_marker" value="$(arg topic_marker)"/>
+
+        <!--for FUSION laser-camera-->
+        <param name="laser_coeff" value="1.0"/>
+        <param name="camera_coeff" value="1.0"/>
+
+        <!-- simulation or real (Only work with value 1 = simulation, do not change it) -->
+        <param name="simulation" value = "1"/>
+	</node>	
+		
+	<!--13. Call bash script to take screenshot and kill nodes -->
+	<node name="test_amcl_screensh_n_kill" pkg="testing_node" type="test_amcl_w_metrics2.bash" output="screen" />
+</launch>

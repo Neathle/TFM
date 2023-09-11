@@ -1,11 +1,14 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/ximgproc.hpp>
 #include <ros/ros.h>
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/CameraInfo.h>
 #include <cv_bridge/cv_bridge.h>
 #include <numeric>
 
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/CameraInfo.h>
+#include <rectangle_detector/marker.h>
+#include <rectangle_detector/messagedet.h>
+#include <rectangle_detector/num_markers.h>
 
 class RectangleDetectorNode
 {
@@ -13,6 +16,7 @@ private:
     ros::Publisher im_pub_lines_;
     ros::Publisher im_pub_rectangles_;
     ros::Publisher im_pub_graph_;
+    ros::Publisher detections_pub_;
     ros::NodeHandle nh_;
     ros::Subscriber im_sub_;
 
@@ -52,7 +56,7 @@ private:
     bool trapezoidAreaTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d, float min_area, float max_area);
     bool trapezoidAnglesTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d);
     bool isConvexTrapezoid(cv::Vec8i trapezoid); //TODO: implement
-    void nonMaximumSuppression();
+    void nonMaximumSuppressionPoints();
     void reduceSaturationBrightness(float saturationScale, float valueScale);
 
     void drawGraph();
@@ -100,6 +104,7 @@ RectangleDetectorNode::RectangleDetectorNode()
     //initialize publishers and subscribers
     im_pub_lines_ = nh_.advertise<sensor_msgs::Image>("/rectangle_detector/lines", 1);
     im_pub_graph_ = nh_.advertise<sensor_msgs::Image>("/rectangle_detector/graph", 1);
+    detections_pub_ = nh_.advertise<rectangle_detector::messagedet>("/rectangle_detector/detections", 1);
 
     if (intersections_detector_mode_) {
         im_sub_ = nh_.subscribe(image_topic_, 1, &RectangleDetectorNode::imageCallbackIntersections, this);
@@ -309,7 +314,7 @@ bool RectangleDetectorNode::trapezoidAnglesTest(cv::Point2i a, cv::Point2i b, cv
 
 
 // Function to remove close intersections
-void RectangleDetectorNode::nonMaximumSuppression() 
+void RectangleDetectorNode::nonMaximumSuppressionPoints() 
 {
     std::vector<cv::Point2i> filteredIntersections;
     std::vector<bool> suppressed(intersections.size(), false);
@@ -430,7 +435,7 @@ void RectangleDetectorNode::findIntersections()
     }
 
     if (nms_threshold_ > 1)
-        nonMaximumSuppression();
+        nonMaximumSuppressionPoints();
 
     ROS_INFO("Found %lu intersections", intersections.size());
 }

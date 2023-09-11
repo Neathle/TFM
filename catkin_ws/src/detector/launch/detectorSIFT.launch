@@ -1,0 +1,12 @@
+<launch>	
+	<!-- Launch detector SIFT -->
+	<node pkg="detector" type="detectorSIFT.py" name="detectorSIFT" output="screen">
+	
+	<param name="markers_path" value="/home/fer/catkin_ws/src/amcl_hybrid/detector/markers/pare/" />
+	<param name="export_path" value="/home/fer/catkin_ws/src/amcl_hybrid/detector/markers/" />
+	<param name="img_topic"    value="/camera/RGB1/Image" />
+	<param name="detection_msg_publish_topic"    value="/camera_link" />
+	<param name="thresh_bin"    value="bin" />	 <!-- bin or bin_inv -->
+	
+	</node>	
+</launch>
