@@ -17,6 +17,7 @@ private:
     ros::Publisher im_pub_rectangles_;
     ros::Publisher im_pub_graph_;
     ros::Publisher detections_pub_;
+    ros::Publisher detections_num_pub_;
     ros::NodeHandle nh_;
     ros::Subscriber im_sub_;
 
@@ -66,6 +67,7 @@ private:
     void findIntersections();
     void createGraph();
     void extractTrapezoids();
+    void publishDetections();
 
 public:
     std::vector<cv::Vec4f> lines;
@@ -77,7 +79,7 @@ public:
     cv::Mat linesImg;
     cv::Mat graphImg;
 
-
+    
     RectangleDetectorNode();
 };
 
@@ -105,6 +107,7 @@ RectangleDetectorNode::RectangleDetectorNode()
     im_pub_lines_ = nh_.advertise<sensor_msgs::Image>("/rectangle_detector/lines", 1);
     im_pub_graph_ = nh_.advertise<sensor_msgs::Image>("/rectangle_detector/graph", 1);
     detections_pub_ = nh_.advertise<rectangle_detector::messagedet>("/rectangle_detector/detections", 1);
+    detections_num_pub_ = nh_.advertise<rectangle_detector::num_markers>("/rectangle_detector/num_detections", 1);
 
     if (intersections_detector_mode_) {
         im_sub_ = nh_.subscribe(image_topic_, 1, &RectangleDetectorNode::imageCallbackIntersections, this);
@@ -165,6 +168,7 @@ void RectangleDetectorNode::imageCallbackTrapezoids(const sensor_msgs::ImageCons
     findIntersections();
     createGraph();
     extractTrapezoids();
+    publishDetections();
 
     //publish images
     im_pub_lines_.publish(cv_bridge::CvImage(std_msgs::Header(), "mono8", linesImg).toImageMsg());
@@ -501,4 +505,53 @@ void RectangleDetectorNode::extractTrapezoids()
         drawTrapezoids();
     
     ROS_INFO("Found %lu trapezoids", trapezoids.size());
+}
+
+void RectangleDetectorNode::publishDetections()
+{
+    // Header header
+    // marker[] DetectedMarkers
+    
+    // geometry_msgs/Point32[] Corners
+    // std_msgs/UInt8 map
+    // std_msgs/UInt8 sector
+    // std_msgs/UInt8 ID
+
+    // Header header
+    // std_msgs/UInt32 number
+
+    rectangle_detector::messagedet msg;
+    rectangle_detector::num_markers msg_num;
+
+
+    msg.header.stamp = ros::Time::now();
+    msg_num.header.stamp = msg.header.stamp;
+
+    msg_num.number.data = trapezoids.size();
+
+    for(const auto& trapezoid : trapezoids)
+    {
+        rectangle_detector::marker marker;
+
+        marker.map.data = 0;
+        marker.sector.data = 0;
+
+        for(int j = 0; j < 4; j++)
+        {
+            geometry_msgs::Point32 corner;
+            corner.x = trapezoid[j*2];
+            corner.y = trapezoid[j*2 + 1];
+            corner.z = 0;
+            
+            marker.Corners.push_back(corner);
+        }
+
+        //TODO: Match rectangles to the map
+
+        msg.DetectedMarkers.push_back(marker);
+    }
+
+    detections_pub_.publish(msg);
+    detections_num_pub_.publish(msg_num);
+
 }

@@ -75,6 +75,9 @@
         "variant": "cpp",
         "bit": "cpp",
         "csignal": "cpp",
-        "forward_list": "cpp"
+        "forward_list": "cpp",
+        "any": "cpp",
+        "future": "cpp",
+        "*.ipp": "cpp"
     },
 }

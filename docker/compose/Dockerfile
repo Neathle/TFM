@@ -93,6 +93,14 @@ RUN curl -o /etc/udev/rules.d/99-realsense-libusb.rules https://raw.githubuserco
 RUN curl -o /etc/udev/rules.d/99-realsense-d4xx-mipi-dfu.rules https://github.com/IntelRealSense/librealsense/blob/master/config/99-realsense-d4xx-mipi-dfu.rules
 
 
+# install other requirements
+RUN apt-get update && apt-get install -y ros-noetic-navigation ros-noetic-tf2-tools ros-noetic-tf2-sensor-msgs \
+                                         ros-noetic-mrpt-navigation imagemagick
+RUN pip install bagpy
+RUN add-apt-repository ppa:joseluisblancoc/mrpt-stable
+RUN apt install libmrpt-dev mrpt-apps -y
+
+
 # cleanup
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*

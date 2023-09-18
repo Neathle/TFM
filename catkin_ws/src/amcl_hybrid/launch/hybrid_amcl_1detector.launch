@@ -1,12 +1,66 @@
 <?xml version="1.0"?>
 <launch>
-	<!--11. Configue Hybrid parameters maps, tfs and topics  -->  
     <arg name="scenario"             default="pare" />
     <arg name="thresh"                 default="bin" />
     <arg name="delay"                   default="2.176" />
     <arg name="num_markers"      default="1" />
     <arg name="file_num"      default="0" />
 
+	<!--1. Launch Map-->
+    <arg name="map_file"    default="$(arg scenario).yaml"                                               />
+    <arg name="map_path" default="/home/fer/catkin_ws/src/rodaad/maps/$(arg scenario)/"  />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_path)$(arg map_file)" />
+	
+	<!--2. Set simulation time to synchronize bag files and node data-->
+	<param name="/use_sim_time" type="bool" value="true"/>
+	
+	<!--3. Launch Rviz -->
+	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/fer/catkin_ws/src/amcl_hybrid/run_amcl/test_amcl.rviz">
+	</node>
+	
+	<!--4. Launch Marker visualizations -->
+    <node pkg="marker_map_creator" type="marker_map_creator.py" name="marker_map_creator" output="screen">
+	<param name= "input_data_folder"   value="/home/fer/catkin_ws/src/amcl_hybrid/marker_map_creator/1_input_data/$(arg scenario)/$(arg thresh)/m$(arg num_markers)/" />
+    <param name= "output_map_path"    value="/home/fer/catkin_ws/src/amcl_hybrid/marker_map_creator/2_output_map/$(arg scenario)/" />
+   <param name= "input_depth_bag"              value="/home/fer/.ros/rgbd1_depth_$(arg scenario).bag" />
+   <param name= "input_depth_img_topic"    value="/camera/RGB1/Image" />
+    <param name= "input_gtruth_bag"    value="/home/fer/.ros/groundtruth_path_$(arg scenario).bag" />
+    </node>
+
+	<!--5. Launch Export Data from testing node -->
+	<node pkg="testing_node" type="export_data.py" name="testing_node_export_data" output="screen">
+	<param name="file_name"      value="$(arg scenario)_test$(arg file_num)"/>
+	<param name="scenario"      value="$(arg scenario)/$(arg thresh)/m$(arg num_markers)"/> <!--este param solo se usa en el script para darle nombre al output folder-->
+	</node>                                                                                       <!--por lo tanto se puede modificar al nombre que se quiera pal folder-->		
+		
+	<!--6. Play odom-gtruth rosbag-->
+	<arg name="file1" default="groundtruth_amcl_path_$(arg scenario)"/>
+	<arg name="file2" default="odom5_$(arg scenario)"/>
+	<arg name="path" default="/home/fer/.ros/"/>
+	<node name="gtruth_odom_bagplayer" pkg="rosbag" type="play" output="screen" args="--clock $(arg path)$(arg file1).bag $(arg path)$(arg file2).bag" />
+	
+	<!--7. Play virtual laser rosbag (it has diff timestamps than the odom and gtruth bags, i.e. a different clock, so it needs to be played separetely)-->                                                                    
+	<arg name="file3" default="virtual_laser_$(arg scenario)"/>                                                                                           
+	<node name="virtual_laser_bagplayer" pkg="rosbag" type="play" output="screen" args="$(arg path)$(arg file3).bag" />		
+
+	<!--8. Launch Detector Node-->
+	<node pkg="detector" type="detectorSIFT.py" name="detectorSIFT" output="screen">
+	<param name="markers_path" value="/home/fer/catkin_ws/src/amcl_hybrid/detector/markers/$(arg scenario)/$(arg thresh)/m$(arg num_markers)/" />
+	<param name="export_path" value="/home/fer/catkin_ws/src/amcl_hybrid/detector/markers/" />
+	<param name="img_topic"    value="/camera/RGB1/Image" />
+	<param name="detection_msg_publish_topic"    value="/camera_link" />
+	<param name="thresh_bin"    value="$(arg thresh)" />	 <!-- bin or bin_inv -->
+	</node>			
+
+	<!--9. Play Image rosbags -->                                                                                                                        
+	<arg name="file4" default="rgbd1_img_$(arg scenario)"/>                                                        
+	<node name="rgbd1_img_bagplayer" pkg="rosbag" type="play" output="screen" args=" $(arg path)$(arg file4).bag" launch-prefix="bash -c 'sleep $(arg delay); $0 $@' " />
+
+	<!--10. Run AMCL node to visualize estimated path -->
+	<node pkg="run_amcl" type="run_amcl" name="run_amcl" output="screen">
+	</node>
+	
+	<!--11. Configue Hybrid parameters maps, tfs and topics  -->  
     <arg name="markers_file_name" default="markers_map_$(arg scenario)_$(arg thresh)_m$(arg num_markers)"/>
     <arg name="marker_positions_file" default="$(find amcl_hybrid)/maps/$(arg markers_file_name).yml" />
 
@@ -100,4 +154,6 @@
         <param name="simulation" value = "1"/>
 	</node>	
 		
+	<!--13. Call bash script to take screenshot and kill nodes -->
+	<node name="test_amcl_screensh_n_kill" pkg="testing_node" type="test_amcl_w_metrics2.bash" output="screen" />
 </launch>
