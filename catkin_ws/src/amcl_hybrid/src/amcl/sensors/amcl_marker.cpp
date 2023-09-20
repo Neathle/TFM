@@ -119,6 +119,7 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData *data, pf_sample_set_t* 
     std::vector<Marcador> detected_from_map;
     float gaussian_norm=1/(sqrt(2*M_PI*self->sigma_hit*self->sigma_hit));
     int valid_msg = 0;
+    //TODO: 3D matching
     for(int k=0;k<observation.size();k++){
         int count = 0, id_marker = 0;
         for (int j=0; j<self->map.size();j++){
