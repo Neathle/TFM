@@ -78,6 +78,9 @@
         "forward_list": "cpp",
         "any": "cpp",
         "future": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "regex": "cpp",
+        "slist": "cpp",
+        "valarray": "cpp"
     },
 }

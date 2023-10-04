@@ -232,7 +232,8 @@ for rectangle_id, points in enumerate(RECTANGLES):
 
     data['marker_positions'].append({"x": float(COM_proj[0]), "y": float(COM_proj[1]), "z": float(COM_proj[2]), 
                                   "roll": float(rpy_angles[0]), "pitch": float(rpy_angles[0]), "yaw": float(rpy_angles[0]), 
-                                  "width": float(width), "height": float(height), "ID": rectangle_id, "corners": rectangle.tolist()[:-1]})
+                                  "width": float(width), "height": float(height), "ID": rectangle_id, # "corners": rectangle.tolist()[:-1],
+                                  "sector": 0, "map": 0})
 
 with open("marker_positions.yml", "w") as f:
         yaml.dump(data, f)

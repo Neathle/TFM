@@ -1,6 +1,6 @@
 /*
-* 
-*/
+ *
+ */
 
 /*
  *  Player - One Hell of a Robot Server
@@ -47,12 +47,12 @@
 #include <detector/marcador.h>
 #include <opencv2/ccalib/omnidir.hpp>
 #include <amcl_hybrid/pixels_cloud.h>
-//#include <amcl_hybrid/fail_marker.h>
+// #include <amcl_hybrid/fail_marker.h>
 #include "ros/ros.h"
 
 using namespace std;
 
-//double height_pos_camera_link_;
+// double height_pos_camera_link_;
 
 namespace amcl
 {
@@ -65,96 +65,156 @@ typedef enum
 // Laser sensor data
 class AMCLMarkerData : public AMCLSensorData
 {
-  public:
-    AMCLMarkerData () {markers_obs;};
-    virtual ~AMCLMarkerData() {markers_obs.clear();};
+public:
+  AMCLMarkerData()
+  {
+    markers_obs;
+  };
+  virtual ~AMCLMarkerData()
+  {
+    markers_obs.clear();
+  };
   // vector of detected Markers
-  public: std::vector<Marcador> markers_obs;
-  //public: double range_max;
- // public: double (*ranges)[2];
+public:
+  std::vector<Marcador> markers_obs;
+  // public: double range_max;
+  // public: double (*ranges)[2];
 };
-
 
 // Marker sensor model
 class AMCLMarker : public AMCLSensor
 {
   // Default constructor
-  public: AMCLMarker(int simulation);
+public:
+  AMCLMarker(int simulation);
 
-  public: virtual ~AMCLMarker();
+public:
+  virtual ~AMCLMarker();
 
-  public: void SetModelLikelihoodField(double z_hit,
-                                       double z_rand,
-                                       double sigma_hit,
-                                       double landa,
-                                       double marker_coeff);
-
+public:
+  void SetModelLikelihoodField(double z_hit, double z_rand, double sigma_hit, double landa, double marker_coeff);
 
   // Update the filter based on the sensor model.  Returns true if the
   // filter has been updated.
-  public: virtual bool UpdateSensor(pf_t *pf, AMCLSensorData *data);
+public:
+  virtual bool UpdateSensor(pf_t* pf, AMCLSensorData* data);
 
   // Determine the probability for the given pose
-  private: static double ObservationLikelihood(AMCLMarkerData *data,
-                                              pf_sample_set_t* set);
-  private:std::vector<geometry_msgs::Point> CalculateRelativePose (Marcador Marca, geometry_msgs::Pose CamaraMundo);
-  private: void LoadCameraInfo(void);
-  //#%
-  private: bool okSetupCameraInfo = true;
-  public: void LoadCameraInfo2(const sensor_msgs::CameraInfoConstPtr& cam_info);
+private:
+  static double ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* set);
 
-  private: std::vector<cv::Point2d> projectPoints(std::vector<geometry_msgs::Point> cam_center_coord);
-  private:std::vector<float> calculateError(std::vector<cv::Point2f> projection_detected, std::vector<cv::Point2d> projection_map);
-  public: marker_model_t model_type;
+private:
+  void CalculateRelativePose(geometry_msgs::Pose CamaraMundo, amcl::AMCLMarker* self);
+
+private:
+  std::vector<size_t> FilterPointsByFOV(geometry_msgs::Pose CamaraMundo, amcl::AMCLMarker* self);
+
+private:
+  void LoadCameraInfo(void);
+  // #%
+private:
+  bool okSetupCameraInfo = true;
+
+public:
+  void LoadCameraInfo2(const sensor_msgs::CameraInfoConstPtr& cam_info);
+
+public:
+  std::vector<Marcador> matchDetectionsToMapMarkers(std::vector<Marcador> observation);
+
+private:
+  std::vector<cv::Point2d> projectPoints(std::vector<geometry_msgs::Point> cam_center_coord);
+
+private:
+  std::vector<float> calculateError(std::vector<cv::Point2f> projection_detected,
+                                    std::vector<cv::Point2d> projection_map);
+
+public:
+  marker_model_t model_type;
 
   // Current data timestamp
-  private: double time;
-  public: float  marker_width, num_cam,marker_height,image_width,image_height, height_center_camera;
+private:
+  double time;
+
+public:
+  float marker_width, num_cam, marker_height, image_width, image_height, height_center_camera;
 
   // Pixels cloud
-  public: amcl_hybrid::pixels_cloud send_pixels_cloud;
-  public: amcl_hybrid::pixels_corners send_pixels_corners;
+public:
+  amcl_hybrid::pixels_cloud send_pixels_cloud;
+
+public:
+  amcl_hybrid::pixels_corners send_pixels_corners;
 
   // Pub_Fail_Marker
-  public: ros::Publisher pub_coeff_marker, pub_marker_error;
+public:
+  ros::Publisher pub_coeff_marker, pub_marker_error;
 
   // The marker map
-  public: std::vector<Marcador> map;
+public:
+  std::vector<Marcador> map;
 
-  //Camera parameters
-  public:std::vector<geometry_msgs::TransformStamped> tf_cameras;
-  public:image_geometry::PinholeCameraModel pin_model;
-  public:sensor_msgs::CameraInfo cam_inf_ed;
-  private: cv::Mat camMatrix, distCoeff;
+  // Camera parameters
+public:
+  std::vector<geometry_msgs::TransformStamped> tf_cameras;
+
+public:
+  image_geometry::PinholeCameraModel pin_model;
+
+public:
+  sensor_msgs::CameraInfo cam_inf_ed;
+
+private:
+  cv::Mat camMatrix, distCoeff;
   double xi;
 
-  //temp data that is kept before observations are integrated to each particle (requried for beam skipping)
-  private: int max_samples;
-  private: int max_obs;
-  public: std::vector<Marcador> temp_obs;
-  public: Mat image_filter;
-  public: int simulation;
+  // temp data that is kept before observations are integrated to each particle (requried for beam skipping)
+private:
+  int max_samples;
+
+private:
+  int max_obs;
+
+public:
+  std::vector<Marcador> temp_obs;
+
+public:
+  Mat image_filter;
+
+public:
+  int simulation;
 
   // Marker model params
   //
   // Mixture params for the components of the model; must sum to 1
-  private: double z_hit;
-  private: double z_short;
-  private: double z_max;
-  private: double z_rand;
-  private: double marker_coeff;
+private:
+  double z_hit;
+
+private:
+  double z_short;
+
+private:
+  double z_max;
+
+private:
+  double z_rand;
+
+private:
+  double marker_coeff;
   //
   // Stddev of Gaussian model for marker hits.
-  private: double sigma_hit;
+private:
+  double sigma_hit;
   // Decay rate of exponential model for short readings.
-  private: double lambda_short;
+private:
+  double lambda_short;
   // Threshold for outlier rejection (unused)
-  private: double chi_outlier;
-   //Landa for exponential model of marker hits.
-  private:double landa;
+private:
+  double chi_outlier;
+  // Landa for exponential model of marker hits.
+private:
+  double landa;
 };
 
-
-}
+}  // namespace amcl
 
 #endif

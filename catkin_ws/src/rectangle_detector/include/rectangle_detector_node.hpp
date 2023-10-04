@@ -313,7 +313,29 @@ bool RectangleDetectorNode::trapezoidAnglesTest(cv::Point2i a, cv::Point2i b, cv
     if (angle3 < CV_PI / 2 - angle_threshold_ || angle3 > CV_PI / 2 + angle_threshold_) return false;
     
     // ROS_INFO("Rectangle angles %f %f %f", angle1, angle2, angle3);
-    return true;
+
+    // Check if line AB is mostly horizontal or vertical
+    if (std::abs(std::atan2(b.y - a.y, b.x - a.x)) < angle_threshold_ 
+     || std::abs(std::atan2(b.y - a.y, b.x - a.x) - CV_PI) < angle_threshold_)
+        return true;
+
+    // Check if line BC is mostly horizontal or vertical
+    if (std::abs(std::atan2(c.y - b.y, c.x - b.x)) < angle_threshold_ 
+     || std::abs(std::atan2(c.y - b.y, c.x - b.x) - CV_PI) < angle_threshold_)
+        return true;
+
+    // Check if line CD is mostly horizontal or vertical
+    if (std::abs(std::atan2(d.y - c.y, d.x - c.x)) < angle_threshold_ 
+     || std::abs(std::atan2(d.y - c.y, d.x - c.x) - CV_PI) < angle_threshold_)
+        return true;
+
+    // Check if line DA is mostly horizontal or vertical
+    if (std::abs(std::atan2(a.y - d.y, a.x - d.x)) < angle_threshold_ 
+     || std::abs(std::atan2(a.y - d.y, a.x - d.x) - CV_PI) < angle_threshold_)
+        return true;
+    
+    // In fo linesare mostly horizontal nor vertical, the test fails
+    return false;
 }
 
 
