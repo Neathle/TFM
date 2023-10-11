@@ -242,6 +242,7 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
           cout<<"mayor"<<endl;
       }*/
     //* }
+    
     sample->weight *= p;
     total_weight += sample->weight;
     // cout << "Sample " << i << " -> " << sample->weight<<endl;
