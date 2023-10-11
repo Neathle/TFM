@@ -100,6 +100,10 @@ RUN pip install bagpy
 RUN add-apt-repository ppa:joseluisblancoc/mrpt-stable
 RUN apt install libmrpt-dev mrpt-apps -y
 
+# clang-format
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
+RUN apt-get update && apt-get install -y clang-format
+
 
 # cleanup
 RUN apt-get clean && \

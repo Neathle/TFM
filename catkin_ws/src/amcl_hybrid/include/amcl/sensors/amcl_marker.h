@@ -56,7 +56,6 @@ using namespace std;
 
 namespace amcl
 {
-
 typedef enum
 {
   MARKER_MODEL_LIKELIHOOD
@@ -125,8 +124,8 @@ private:
   std::vector<cv::Point2d> projectPoints(std::vector<geometry_msgs::Point> cam_center_coord);
 
 private:
-  std::vector<float> calculateError(std::vector<cv::Point2f> projection_detected,
-                                    std::vector<cv::Point2d> projection_map);
+  std::pair<size_t, float>  calculateError(std::vector<Marcador>& observation,
+                                    std::vector<cv::Point2d> map_marker);
 
 public:
   marker_model_t model_type;
