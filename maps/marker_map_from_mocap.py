@@ -151,7 +151,10 @@ def calculate_rectangle(points):
 
     # Step 7: Calculate the roll, pitch, and yaw angles
     # rot_matrix = np.array([[1,0,0], [0,1,0], [0,0,1]]).T
-    rot_matrix = np.array([x_axis / np.linalg.norm(x_axis), y_axis / np.linalg.norm(y_axis), z_axis / np.linalg.norm(z_axis)])
+    x_axis = x_axis / np.linalg.norm(x_axis)
+    y_axis = y_axis / np.linalg.norm(y_axis)
+    z_axis = z_axis / np.linalg.norm(z_axis)
+    rot_matrix = np.array([z_axis,x_axis,y_axis])
     print(rot_matrix)
     rpy_angles = tf.euler_from_matrix(rot_matrix, axes="rzyx")
     rot_matrix = tf.euler_matrix(rpy_angles[0], rpy_angles[1], rpy_angles[2], "rzyx")
