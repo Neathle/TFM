@@ -3,6 +3,7 @@ from scipy.linalg import svd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial.distance import cdist
+from scipy.spatial.transform import Rotation as R
 import yaml
 
 def calculate_rectangle(points):
@@ -113,18 +114,11 @@ def calculate_rectangle(points):
     x_axis = rectangle[(x_axis_index+1)%4] - rectangle[x_axis_index]
 
     # Ensure the y-axis has a positive direction
-    if np.cross(x_axis, normal)[2] > 0:
+    if np.cross(x_axis, normal)[2] < 0:
         x_axis = -x_axis
 
     y_axis = np.cross(normal, x_axis)
     z_axis = normal
-
-    # Step 7: Calculate the roll, pitch, and yaw angles
-    yaw = np.arctan2(y_axis[0], x_axis[0])
-    pitch = np.arctan2(-z_axis[0], np.sqrt(z_axis[1]**2 + z_axis[2]**2))
-    roll = np.arctan2(z_axis[1], z_axis[2])
-
-    rpy_angles = np.array([roll, pitch, yaw])
 
 
     # Step 8: Return the projected COM position, rpy angles, width, and height
@@ -151,6 +145,29 @@ def calculate_rectangle(points):
     ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], x_axis[0], x_axis[1], x_axis[2], color='r')
     ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], y_axis[0], y_axis[1], y_axis[2], color='g')
     ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], z_axis[0], z_axis[1], z_axis[2], color='b')
+
+
+    # Step 7: Calculate the roll, pitch, and yaw angles
+    # rot_matrix = np.array([[1,0,0], [0,1,0], [0,0,1]]).T
+    rot_matrix = np.array([x_axis / np.linalg.norm(x_axis), y_axis / np.linalg.norm(y_axis), z_axis / np.linalg.norm(z_axis)]).T
+    rot = R.from_matrix(rot_matrix)
+    print("WXYZ: ",rot.as_quat())
+    # rot_degrees = R.from_euler('z', 90, degrees=True)
+    # rot *= rot_degrees
+    # rot_degrees = R.from_euler('x', 45, degrees=True)
+    # rot *= rot_degrees
+    rpy_angles = rot.as_euler('xyz')
+    rrot = R.from_euler('xyz', rpy_angles)
+    rrot_matrix = rrot.as_matrix().T
+
+    x_axis, y_axis, z_axis = rrot_matrix
+    x_axis = x_axis / np.linalg.norm(x_axis) * width / 5
+    y_axis = y_axis / np.linalg.norm(y_axis) * width / 5
+    z_axis = z_axis / np.linalg.norm(z_axis) * width / 5
+    ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], x_axis[0], x_axis[1], x_axis[2], color='r')
+    ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], y_axis[0], y_axis[1], y_axis[2], color='g')
+    ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], z_axis[0], z_axis[1], z_axis[2], color='b')
+
 
     # Set the limits of the plot
     ax.set_xlim([COM_proj[0] - width, COM_proj[0] + width])
@@ -229,13 +246,14 @@ for rectangle_id, points in enumerate(RECTANGLES):
     print(f"Roll-Pitch-Yaw angles: {rpy_angles}")
     print(f"Width: {width}")
     print(f"Height: {height}")
+    print(f"Rectangle: {rectangle}")
 
     data['marker_positions'].append({"x": float(COM_proj[0]), "y": float(COM_proj[1]), "z": float(COM_proj[2]), 
-                                  "roll": float(rpy_angles[0]), "pitch": float(rpy_angles[0]), "yaw": float(rpy_angles[0]), 
+                                  "roll": float(rpy_angles[0]), "pitch": float(rpy_angles[1]), "yaw": float(rpy_angles[2]), 
                                   "width": float(width), "height": float(height), "ID": rectangle_id, # "corners": rectangle.tolist()[:-1],
                                   "sector": 0, "map": 0})
 
-with open("marker_positions.yml", "w") as f:
+with open("src/amcl_hybrid/maps/marker_positions.yml", "w") as f:
         yaml.dump(data, f)
 
 

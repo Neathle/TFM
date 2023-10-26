@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
 <launch>
 	<!--11. Configue Hybrid parameters maps, tfs and topics  -->  
-    <arg name="scenario"             default="pare" />
+    <!-- <arg name="scenario"             default="pare" />
     <arg name="thresh"                 default="bin" />
     <arg name="delay"                   default="2.176" />
     <arg name="num_markers"      default="1" />
     <arg name="file_num"      default="0" />
 
     <arg name="markers_file_name" default="markers_map_$(arg scenario)_$(arg thresh)_m$(arg num_markers)"/>
-    <arg name="marker_positions_file" default="$(find amcl_hybrid)/maps/$(arg markers_file_name).yml" />
+    <arg name="marker_positions_file" default="$(find amcl_hybrid)/maps/$(arg markers_file_name).yml" /> -->
+
+    <arg name="marker_positions_file" default="$(find amcl_hybrid)/maps/marker_positions.yml"/>
 
     <arg name="cameras_file_name" default="cameras"/>
     <arg name="cameras_positions_file" default="$(find amcl_hybrid)/maps/$(arg cameras_file_name).yaml" />
