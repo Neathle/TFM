@@ -50,6 +50,7 @@ qtcreator-*
 # Catkin custom files
 CATKIN_IGNORE
 /catkin_ws/.catkin_tools
+/catkin_ws/src/slam_toolbox
 
 # VSCode
 /.vscode/
