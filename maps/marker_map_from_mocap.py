@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial.distance import cdist
 from scipy.spatial.transform import Rotation as R
+import rospy
+import tf.transformations as tf
 import yaml
 
 def calculate_rectangle(points):
@@ -149,25 +151,19 @@ def calculate_rectangle(points):
 
     # Step 7: Calculate the roll, pitch, and yaw angles
     # rot_matrix = np.array([[1,0,0], [0,1,0], [0,0,1]]).T
-    rot_matrix = np.array([x_axis / np.linalg.norm(x_axis), y_axis / np.linalg.norm(y_axis), z_axis / np.linalg.norm(z_axis)]).T
-    rot = R.from_matrix(rot_matrix)
-    print("WXYZ: ",rot.as_quat())
-    # rot_degrees = R.from_euler('z', 90, degrees=True)
-    # rot *= rot_degrees
-    # rot_degrees = R.from_euler('x', 45, degrees=True)
-    # rot *= rot_degrees
-    rpy_angles = rot.as_euler('xyz')
-    rrot = R.from_euler('xyz', rpy_angles)
-    rrot_matrix = rrot.as_matrix().T
+    rot_matrix = np.array([x_axis / np.linalg.norm(x_axis), y_axis / np.linalg.norm(y_axis), z_axis / np.linalg.norm(z_axis)])
+    print(rot_matrix)
+    rpy_angles = tf.euler_from_matrix(rot_matrix, axes="rzyx")
+    rot_matrix = tf.euler_matrix(rpy_angles[0], rpy_angles[1], rpy_angles[2], "rzyx")
+    print("Quat: ",tf.quaternion_from_matrix(rot_matrix))
+    print(rot_matrix)
 
-    x_axis, y_axis, z_axis = rrot_matrix
-    x_axis = x_axis / np.linalg.norm(x_axis) * width / 5
-    y_axis = y_axis / np.linalg.norm(y_axis) * width / 5
-    z_axis = z_axis / np.linalg.norm(z_axis) * width / 5
+    x_axis = rot_matrix[0,:-1] * width / 5
+    y_axis = rot_matrix[1,:-1] * width / 5
+    z_axis = rot_matrix[2,:-1] * width / 5
     ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], x_axis[0], x_axis[1], x_axis[2], color='r')
     ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], y_axis[0], y_axis[1], y_axis[2], color='g')
     ax.quiver(COM_proj[0], COM_proj[1], COM_proj[2], z_axis[0], z_axis[1], z_axis[2], color='b')
-
 
     # Set the limits of the plot
     ax.set_xlim([COM_proj[0] - width, COM_proj[0] + width])
@@ -180,7 +176,7 @@ def calculate_rectangle(points):
     ax.set_zlabel('Z')
 
     # Display the plot
-    plt.show()
+    # plt.show()
 
     return COM_proj, rpy_angles, width, height, rectangle
 
@@ -249,7 +245,7 @@ for rectangle_id, points in enumerate(RECTANGLES):
     print(f"Rectangle: {rectangle}")
 
     data['marker_positions'].append({"x": float(COM_proj[0]), "y": float(COM_proj[1]), "z": float(COM_proj[2]), 
-                                  "roll": float(rpy_angles[0]), "pitch": float(rpy_angles[1]), "yaw": float(rpy_angles[2]), 
+                                  "roll": float(rpy_angles[2]), "pitch": float(rpy_angles[1]), "yaw": float(rpy_angles[0]), 
                                   "width": float(width), "height": float(height), "ID": rectangle_id, # "corners": rectangle.tolist()[:-1],
                                   "sector": 0, "map": 0})
 
