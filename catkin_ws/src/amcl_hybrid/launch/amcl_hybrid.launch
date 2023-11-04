@@ -14,13 +14,13 @@
 
     <arg name="cameras_file_name" default="cameras"/>
     <arg name="cameras_positions_file" default="$(find amcl_hybrid)/maps/$(arg cameras_file_name).yaml" />
-    <arg name="scan_topic" default="laser"/>
+    <arg name="scan_topic" default="scan"/>
 
     <arg name="odom_topic" default="odom"/>
-    <arg name="base_frame_robot" default="base_link"/>
+    <arg name="base_frame_robot" default="base_footprint"/>
     <arg name="global_frame" default="map"/>
-    <arg name="camera_link" default="camera/RGB1/Image"/>
-    <arg name="camera_topic" default="camera/RGB1/camera_info"/>
+    <arg name="camera_link" default="xtion_rgb_optical_frame"/>
+    <arg name="camera_topic" default="xtion/rgb/image_rect_color"/>
 
     <arg name="topic_output_video" default="image_converter/output_video"/>
     <arg name="topic_marker" default="detected_markers"/>   
