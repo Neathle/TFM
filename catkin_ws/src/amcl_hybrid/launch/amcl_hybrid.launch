@@ -16,7 +16,7 @@
     <arg name="cameras_positions_file" default="$(find amcl_hybrid)/maps/$(arg cameras_file_name).yaml" />
     <arg name="scan_topic" default="scan"/>
 
-    <arg name="odom_topic" default="odom"/>
+    <arg name="odom_frame" default="odom"/>
     <arg name="base_frame_robot" default="base_footprint"/>
     <arg name="global_frame" default="map"/>
     <arg name="camera_link" default="xtion_rgb_optical_frame"/>
@@ -86,7 +86,7 @@
         <param name="marker_sigma_hit" value="100"/>
         <param name="marker_landa" value="2"/>
         <param name="base_frame_id" value="$(arg base_frame_robot)" /> 
-        <param name="odom_frame_id" value="$(arg odom_topic)"/>
+        <param name="odom_frame_id" value="$(arg odom_frame)"/>
         <param name="global_frame_id" value="$(arg global_frame)"/>
         <param name="camera_topic" value="$(arg camera_topic)"/>
         <param name="height_pos_camera_link" value="$(arg height_pos_camera_link)"/>
