@@ -9,8 +9,9 @@ services:
     container_name: ros-master
     image: ros:noetic-ros-core
     command: stdbuf -o L roscore
-    networks:
-      - ros
+    # networks:
+    #   - ros
+    network_mode: host
     restart: always
     ports:
       - "11311:11311"
@@ -27,8 +28,9 @@ services:
         USER: ${USER}
     depends_on:
       - ros-master
-    networks:
-      - ros
+    # networks:
+    #   - ros
+    network_mode: host
     environment:
       - "ROS_MASTER_URI=http://ros-master:11311"
       -  DISPLAY
@@ -44,8 +46,6 @@ services:
       - /etc/group:/etc/group:ro
       - /etc/passwd:/etc/passwd:ro
       - /etc/shadow:/etc/shadow:ro
-      # - /etc/sudoers:/etc/sudoers:ro
-      # - /etc/sudoers.d:/etc/sudoers.d:ro
       - /home/${USER}:/home/${USER}:rw #share your home with write permissions
       - /dev:/dev
     device_cgroup_rules:
@@ -54,9 +54,6 @@ services:
       - 'c 700:* rmw'
     restart: always
     stdin_open: true
-    # ports:
-      # - "192.168.1.101:1510:1510/udp"
-      # - "192.168.1.101:1511:1511/udp"
     tty: true
     cap_add:
       - SYS_PTRACE
@@ -69,4 +66,58 @@ services:
           devices:
             - driver: nvidia
               count: 1
+              capabilities: [gpu]
+
+  isaac-sim:
+    image: nvcr.io/nvidia/isaac-sim:2022.2.1
+    container_name: isaac-sim
+    depends_on:
+      - ros-master
+    # networks:
+    #   - ros
+    network_mode: host
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+      -  DISPLAY
+      -  NVIDIA_VISIBLE_DEVICES=all
+      -  NVIDIA_DRIVER_CAPABILITIES=all
+      -  QT_X11_NO_MITSHM=1 #fix some QT bugs
+      -  ACCEPT_EULA=Y
+      -  PRIVACY_CONSENT=Y
+    #share your user to the container in order to access your x11
+    volumes: 
+      #share your x11 socket and permissions to the container
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /home/${USER}/.Xauthority:/root/.Xauthority?:ro
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/shadow:/etc/shadow:ro
+      - /home/${USER}:/home/${USER}:rw #share your home with write permissions
+      - /dev:/dev
+      - /home/${USER}/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw
+      - /home/${USER}/docker/isaac-sim/cache/ov:/root/.cache/ov:rw
+      - /home/${USER}/docker/isaac-sim/cache/pip:/root/.cache/pip:rw
+      - /home/${USER}/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw
+      - /home/${USER}/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw
+      - /home/${USER}/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw
+      - /home/${USER}/docker/isaac-sim/data:/root/.local/share/ov/data:rw
+      - /home/${USER}/docker/isaac-sim/documents:/root/Documents:rw
+    device_cgroup_rules:
+      - 'c 81:* rmw'
+      - 'c 505:* rmw'
+      - 'c 700:* rmw'
+    restart: always
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    privileged: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
               capabilities: [gpu]
