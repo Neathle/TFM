@@ -56,3 +56,5 @@ CATKIN_IGNORE
 # VSCode
 /.vscode/
 /rosbags/
+simulation/tiago_robot
+catkin_ws/src/slam_toolbox
