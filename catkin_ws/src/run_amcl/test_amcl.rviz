@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /Odometry1
+        - /Odometry1/Shape1
         - /Odometry2
         - /Odometry2/Shape1
       Splitter Ratio: 0.5
@@ -185,13 +186,13 @@ Visualization Manager:
       Position Tolerance: 0.10000000149011612
       Queue Size: 10
       Shape:
-        Alpha: 1
+        Alpha: 0.800000011920929
         Axes Length: 1
         Axes Radius: 0.10000000149011612
         Color: 255; 25; 0
         Head Length: 0.30000001192092896
         Head Radius: 0.10000000149011612
-        Shaft Length: 1
+        Shaft Length: 0.699999988079071
         Shaft Radius: 0.05000000074505806
         Value: Arrow
       Topic: /odom
@@ -260,7 +261,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.3042738437652588
+      Distance: 1.6316550970077515
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

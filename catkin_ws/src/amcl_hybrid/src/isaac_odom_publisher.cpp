@@ -6,6 +6,7 @@
 #include <urdf_parser/urdf_parser.h>
 #include <realtime_tools/realtime_buffer.h>
 #include <realtime_tools/realtime_publisher.h>
+#include <random>
 
 constexpr size_t N = 20;
 
@@ -112,7 +113,7 @@ static bool getWheelRadius(const urdf::LinkConstSharedPtr& wheel_link, double& w
 class IsaacOdomPublisher
 {
 public:
-  IsaacOdomPublisher()
+  IsaacOdomPublisher(): distribution(0.0, std::sqrt(0.01))
   {
     nh.param("left_wheel_names", left_wheel_names, std::vector<std::string>(1, "wheel_left_joint"));
     nh.param("right_wheel_names", right_wheel_names,  std::vector<std::string>(1, "wheel_right_joint"));
@@ -166,7 +167,7 @@ public:
               left_pos = -M_PI - left_pos;
             }
         }
-        left_pos = unwrap(left_pos, true);
+        left_pos = unwrap(left_pos, true) + distribution(generator);
 
         ROS_WARN_STREAM_NAMED(name_, "old_left_pos: " << old_left_pos << ", left_pos: " << left_pos << ", yaw:" << yaw);
 
@@ -389,6 +390,9 @@ private:
   double offset_right = 0.0;
   double previous_left_pos = 0.0;
   double previous_right_pos = 0.0;
+
+  std::default_random_engine generator;
+  std::normal_distribution<double> distribution;
 };
 
 int main(int argc, char** argv)
