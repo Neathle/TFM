@@ -1,0 +1,14 @@
+digraph G {
+"base_footprint" -> "base_link"[label="Broadcaster: /OmniIsaacRosBridge\nAverage rate: 30.476 Hz\nMost recent transform: 2106.933 ( 1700586970.125 sec old)\nBuffer length: 2.100 sec\n"];
+"odom" -> "base_footprint"[label="Broadcaster: /OmniIsaacRosBridge\nAverage rate: 30.476 Hz\nMost recent transform: 2106.933 ( 1700586970.125 sec old)\nBuffer length: 2.100 sec\n"];
+"base_footprint" -> "base_imu_link"[label="Broadcaster: /OmniIsaacRosBridge\nAverage rate: 30.476 Hz\nMost recent transform: 2106.933 ( 1700586970.125 sec old)\nBuffer length: 2.100 sec\n"];
+"base_footprint" -> "base_laser_link"[label="Broadcaster: /OmniIsaacRosBridge\nAverage rate: 30.476 Hz\nMost recent transform: 2106.933 ( 1700586970.125 sec old)\nBuffer length: 2.100 sec\n"];
+"base_footprint" -> "wheel_left_link"[label="Broadcaster: /OmniIsaacRosBridge\nAverage rate: 30.476 Hz\nMost recent transform: 2106.933 ( 1700586970.125 sec old)\nBuffer length: 2.100 sec\n"];
+"base_footprint" -> "wheel_right_link"[label="Broadcaster: /OmniIsaacRosBridge\nAverage rate: 30.476 Hz\nMost recent transform: 2106.933 ( 1700586970.125 sec old)\nBuffer length: 2.100 sec\n"];
+"base_footprint" -> "xtion_depth_optical_frame"[label="Broadcaster: /OmniIsaacRosBridge\nAverage rate: 30.476 Hz\nMost recent transform: 2106.933 ( 1700586970.125 sec old)\nBuffer length: 2.100 sec\n"];
+"base_footprint" -> "xtion_rgb_optical_frame"[label="Broadcaster: /OmniIsaacRosBridge\nAverage rate: 30.476 Hz\nMost recent transform: 2106.933 ( 1700586970.125 sec old)\nBuffer length: 2.100 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1700589077.059"[ shape=plaintext ] ;
+ }->"odom";
+}

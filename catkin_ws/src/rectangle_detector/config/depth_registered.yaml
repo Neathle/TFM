@@ -1,0 +1,20 @@
+image_width: 640
+image_height: 480
+camera_name: xtion_depth_registered
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [515.8668782266329, 0.0, 332.2750817773881, 0.0, 516.2546881081752, 237.2817318673198, 0.0, 0.0, 1.0]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [0.02019943683275026, -0.08339482869293142, -0.004265862094806434, 0.0041277952286131285, 0.0]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [513.1033325195312, 0.0, 335.3405633298644, 0.0, 0.0, 516.9007568359375, 235.73558310651788, 0.0, 0.0, 0.0, 1.0, 0.0]

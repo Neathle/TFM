@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-    <!--2. Set simulation time to synchronize bag files and node data-->
+    <!-- 0. Set simulation time to synchronize bag files and node data-->
 	<param name="/use_sim_time" type="bool" value="true"/>
 
     <!-- 1. AMCL Hybrid -->
@@ -15,6 +15,15 @@
     <arg name="map_path" default="$(find amcl_hybrid)/../../../maps/" />
     <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_path)$(arg map_file)" />
 
-    
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find tiago_description)/robots/tiago.urdf.xacro'" />
+
+    <!-- 4. Isaac Republish Node -->
+    <rosparam file="$(find amcl_hybrid)/cfg/odom_params.yaml" command="load" />
+    <node pkg="amcl_hybrid" type="isaac_odom_publisher" name="isaac_odom_publisher" output="screen"/>
+
+    <!-- 5. Rectangle Detector Node-->
+    <include file="$(find rectangle_detector)/launch/rectangle_detector_minimal.launch">
+        <remap from="/rectangle_detector/detections" to="/detected_markers"/>
+    </include>
 
 </launch>

@@ -22,6 +22,8 @@ find_package(catkin REQUIRED COMPONENTS
     visualization_msgs
     message_generation
     detector
+    realtime_tools
+    urdf
 )
 
 find_package(Boost REQUIRED)
@@ -56,7 +58,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES amcl_sensors amcl_map amcl_pf
+  LIBRARIES amcl_sensors amcl_map amcl_pf isaac_odometry
   CATKIN_DEPENDS
 	rosbag
         roscpp
@@ -99,7 +101,10 @@ add_library(amcl_sensors
                     src/amcl/sensors/amcl_laser.cpp
 		    src/amcl/sensors/amcl_marker.cpp)
 
-target_link_libraries(amcl_sensors amcl_map amcl_pf ${OPENCV_LIBS} ${catkin_LIBRARIES} detector)
+add_library(isaac_odometry
+        src/odometry/odometry.cpp)
+
+target_link_libraries(amcl_sensors amcl_map amcl_pf isaac_odometry ${OPENCV_LIBS} ${catkin_LIBRARIES} detector)
 
 add_executable(amcl_hybrid src/amcl_node.cpp)
 add_dependencies(amcl_hybrid ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} detector)
@@ -112,8 +117,18 @@ target_link_libraries(amcl_hybrid
     detector
 )
 
+add_executable(isaac_odom_publisher src/isaac_odom_publisher.cpp)
+
+target_link_libraries(isaac_odom_publisher
+    isaac_odometry
+    ${Boost_LIBRARIES}
+    ${catkin_LIBRARIES}
+    ${OPENCV_LIBS} 
+)
+
+
 install( TARGETS
-    amcl_hybrid amcl_sensors amcl_map amcl_pf
+    amcl_hybrid amcl_sensors amcl_map amcl_pf isaac_odometry
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

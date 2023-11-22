@@ -32,7 +32,7 @@ services:
     #   - ros
     network_mode: host
     environment:
-      - "ROS_MASTER_URI=http://ros-master:11311"
+      - "ROS_MASTER_URI=http://localhost:11311"
       -  DISPLAY
       -  NVIDIA_VISIBLE_DEVICES=all
       -  NVIDIA_DRIVER_CAPABILITIES=all
@@ -77,7 +77,7 @@ services:
     #   - ros
     network_mode: host
     environment:
-      - "ROS_MASTER_URI=http://ros-master:11311"
+      - "ROS_MASTER_URI=http://localhost:11311"
       -  DISPLAY
       -  NVIDIA_VISIBLE_DEVICES=all
       -  NVIDIA_DRIVER_CAPABILITIES=all

@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   cv_bridge
   message_generation
+  detector
 )
 
 find_package(OpenCV)
@@ -53,12 +54,6 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  marker.msg
-  messagedet.msg
-  num_markers.msg
-)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -75,11 +70,7 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-  sensor_msgs#   std_msgs
-)
+
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -113,7 +104,7 @@ generate_messages(
 catkin_package(
    INCLUDE_DIRS include
    LIBRARIES rectangle_detector
-   CATKIN_DEPENDS roscpp sensor_msgs std_msgs cv_bridge message_generation
+   CATKIN_DEPENDS roscpp sensor_msgs std_msgs cv_bridge detector
 #  DEPENDS system_lib
 )
 
@@ -126,6 +117,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${detector_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -151,12 +143,13 @@ add_executable(${PROJECT_NAME}_node src/rectangle_detector_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} detector)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  detector
 )
 
 #############
@@ -192,6 +185,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.h"
   PATTERN ".svn" EXCLUDE
+)
+
+install(DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
