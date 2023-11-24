@@ -113,7 +113,7 @@ static bool getWheelRadius(const urdf::LinkConstSharedPtr& wheel_link, double& w
 class IsaacOdomPublisher
 {
 public:
-  IsaacOdomPublisher(): distribution(0.0, std::sqrt(0.01))
+  IsaacOdomPublisher(): distribution(0.0, std::sqrt(0.001))
   {
     nh.param("left_wheel_names", left_wheel_names, std::vector<std::string>(1, "wheel_left_joint"));
     nh.param("right_wheel_names", right_wheel_names,  std::vector<std::string>(1, "wheel_right_joint"));
@@ -169,7 +169,7 @@ public:
         }
         left_pos = unwrap(left_pos, true) + distribution(generator);
 
-        ROS_WARN_STREAM_NAMED(name_, "old_left_pos: " << old_left_pos << ", left_pos: " << left_pos << ", yaw:" << yaw);
+        // ROS_WARN_STREAM_NAMED(name_, "old_left_pos: " << old_left_pos << ", left_pos: " << left_pos << ", yaw:" << yaw);
 
         listener.lookupTransform(base_frame_id, "wheel_right_link", ros::Time(0), transform);
         tf::Quaternion right_rot = transform.getRotation();
