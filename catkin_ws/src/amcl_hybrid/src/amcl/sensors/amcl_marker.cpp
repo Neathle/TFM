@@ -143,20 +143,23 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
     sample_pose.orientation = quat_msg;
     
     // *** ADAPT MARKER MAP POINTS TO THE PARTICLE ***
+    bool print_steps = false;
 
     // STEP 1. Proyect all points relative to the camera, points should maintain marker ownership
     // Points are stored in the field map[n].ReltoCam
     self->CalculateRelativePose(sample_pose, self);
 
+    if(print_steps){
     std::cout << "ReltoCam first rectangle in map:" << std::endl;
     for(const auto &point : self->map[0].ReltoCam) {
         std::cout << "  Point: (" << point.x << ", " << point.y << ", " << point.z << ")" << std::endl;
-    }
+    }}
 
     // STEP 2. Filter points with the implicit equation of the camera, discard markers where all points are not
     // STEP    maintained
     std::vector<size_t> filtered_marker_indices = self->FilterPointsByFOV(sample_pose, self);
 
+    if(print_steps){
     std::stringstream ss;
     ss << "Filter Indices: [";
     for(const auto &index : filtered_marker_indices) {
@@ -164,6 +167,7 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
     }
     ss << "]\n";
     std::cout << ss.str();
+    }
 
     // STEP 3. Project those points to the image plane
     std::vector<std::vector<cv::Point2d>> projected_markers(filtered_marker_indices.size());
@@ -171,12 +175,13 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
         filtered_marker_indices.begin(), filtered_marker_indices.end(), projected_markers.begin(),
         [self](size_t j /*j: filtered marker index*/) { return self->projectPoints(self->map[j].ReltoCam); });
 
+    if(print_steps){
     for (const auto& marker : projected_markers) {
         std::cout << "Projected" << std::endl;
         for (const auto& point : marker) {
             std::cout << "  Point: (" << point.x << ", " << point.y << ")" << std::endl;
         }
-    }
+    }}
 
     // STEP 4. For each map marker, for each detected marker calculate the error, keep the detected marker with min
     // STEP    error, threshold error

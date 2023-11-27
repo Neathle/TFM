@@ -61,7 +61,7 @@ void RectangleDetectorNode::imageCallbackIntersections(const sensor_msgs::ImageC
         cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
         linesImg = cv::Mat::zeros(gray.size(), CV_8UC1);
 
-        image_stamp_ = msg->header.stamp;
+        image_stamp_ = ros::Time::now();
 
         // ROS_INFO("Received Image");
     }
@@ -93,6 +93,8 @@ void RectangleDetectorNode::imageCallbackTrapezoids(const sensor_msgs::ImageCons
         cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
         linesImg = cv::Mat::zeros(gray.size(), CV_8UC1);
         graphImg = cv::Mat::zeros(gray.size(), CV_8UC3);
+
+        image_stamp_ = ros::Time::now();
 
         // ROS_INFO("Received Image");
     }
@@ -489,6 +491,8 @@ void RectangleDetectorNode::publishDetections()
     msg_num.header.frame_id = "xtion_rgb_optical_frame";
     msg_num.header.seq = 0;
     msg_num.header.stamp = image_stamp_;
+
+    // ROS_INFO_STREAM("STAMPS: " << image_stamp_ << " " << msg.header.stamp << " " << msg_num.header.stamp);
 
     msg_num.number.data = trapezoids.size();
 
