@@ -446,11 +446,12 @@ void RectangleDetectorNode::extractTrapezoids()
                                                     intersections[j].x, intersections[j].y,
                                                     intersections[k].x, intersections[k].y,
                                                     intersections[l].x, intersections[l].y));
+                    if(trapezoids.size() >= 50) goto endloop;
                 }
             }
         }
     }
-
+    endloop:
     if (draw_trapezoids_)
         drawTrapezoids();
     
@@ -474,9 +475,9 @@ void RectangleDetectorNode::publishDetections()
     detector::num_markers msg_num;
 
     msg.header.stamp = image_stamp_;
-    msg.header.frame_id = "";
+    msg.header.frame_id = "xtion_rgb_optical_frame";
     msg.header.seq = 0;
-    msg_num.header.frame_id = "";
+    msg_num.header.frame_id = "xtion_rgb_optical_frame";
     msg_num.header.seq = 0;
     msg_num.header.stamp = image_stamp_;
 
@@ -484,7 +485,7 @@ void RectangleDetectorNode::publishDetections()
 
     if (!trapezoids.size()) return;
 
-    ROS_WARN("Found %lu trapezoids", (long unsigned int)msg_num.number.data);
+    ROS_INFO("Found %lu trapezoids", (long unsigned int)msg_num.number.data);
 
     for(const auto& trapezoid : trapezoids)
     {
@@ -498,8 +499,8 @@ void RectangleDetectorNode::publishDetections()
         for(int j = 0; j < 4; j++)
         {
             geometry_msgs::Point32 corner;
-            corner.x = (float)trapezoid[j*2];
-            corner.y = (float)trapezoid[j*2 + 1];
+            corner.x = trapezoid[j*2];
+            corner.y = trapezoid[j*2 + 1];
             corner.z = 0.0;
             
             marker.Corners[j] = corner;
@@ -510,24 +511,24 @@ void RectangleDetectorNode::publishDetections()
         msg.DetectedMarkers.push_back(marker);
     }
 
-    // Print the complete message to ROS info after the loop
-    std::stringstream ss;
-    ss << "Complete message: number=" << (long unsigned int)msg_num.number.data
-       << ", markers: [";
-    for(const auto& marker : msg.DetectedMarkers)
-    {
-        ss << "map=" << (int)marker.map.data
-           << ", sector=" << (int)marker.sector.data
-           << ", ID=" << (int)marker.ID.data
-           << ", corners=";
-        for(const auto& corner : marker.Corners)
-        {
-            ss << "(" << corner.x << ", " << corner.y << ", " << corner.z << "), ";
-        }
-        ss << "; ";
-    }
-    ss << "]";
-    ROS_INFO_STREAM(ss.str());
+    // // Print the complete message to ROS info after the loop
+    // std::stringstream ss;
+    // ss << "Complete message: number=" << (long unsigned int)msg_num.number.data
+    //    << ", markers: [";
+    // for(const auto& marker : msg.DetectedMarkers)
+    // {
+    //     ss << "map=" << (int)marker.map.data
+    //        << ", sector=" << (int)marker.sector.data
+    //        << ", ID=" << (int)marker.ID.data
+    //        << ", corners=";
+    //     for(const auto& corner : marker.Corners)
+    //     {
+    //         ss << "(" << corner.x << ", " << corner.y << ", " << corner.z << "), ";
+    //     }
+    //     ss << "; ";
+    // }
+    // ss << "]";
+    // ROS_INFO_STREAM(ss.str());
 
     detections_pub_.publish(msg);
     detections_num_pub_.publish(msg_num);

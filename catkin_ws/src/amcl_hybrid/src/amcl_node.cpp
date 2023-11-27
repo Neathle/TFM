@@ -475,12 +475,12 @@ AmclNode::AmclNode()
   private_nh_.param("update_min_d", d_thresh_, 0.2);
   private_nh_.param("update_min_a", a_thresh_, M_PI / 6.0);
   private_nh_.param("odom_frame_id", odom_frame_id_, std::string("odom"));
-  private_nh_.param("base_frame_id", base_frame_id_, std::string("base_link"));
+  private_nh_.param("base_frame_id", base_frame_id_, std::string("base_footprint"));
   private_nh_.param("global_frame_id", global_frame_id_, std::string("map"));
-  private_nh_.param("camera_topic", camera_topic_, std::string("/camera/RGB/camera_info"));
+  private_nh_.param("camera_topic", camera_topic_, std::string("/camera_info"));
   private_nh_.param("resample_interval", resample_interval_, 2);
   private_nh_.param("height_pos_camera_link", height_pos_camera_link_, -0.0001);
-  private_nh_.param("camera_link", camera_link_, std::string("camera_link"));
+  private_nh_.param("camera_link", camera_link_, std::string("xtion_rgb_optical_link"));
   private_nh_.param("topic_output_video", topic_output_video, std::string("/image_converter/output_video"));
   private_nh_.param("topic_marker", topic_marker, std::string("/detected_markers"));
   double tmp_tol;
@@ -651,11 +651,11 @@ AmclNode::AmclNode()
   cout << "height_pos_camera_link_: " << height_pos_camera_link_ << endl;
   // #% execute callback to camera info
   // this->pub_route_calc=nh_.advertise<visualization_msgs::Marker> ("route_amcl")
+
   this->info_Camera =
       private_nh_.subscribe<sensor_msgs::CameraInfo>(camera_topic_, 1, &AmclNode::setupCameraCallback, this);
   this->detector_subs =
       private_nh_.subscribe<sensor_msgs::Image>(topic_output_video, 1, &AmclNode::imageCallback, this);
-
   marker_detection_sub_ = new message_filters::Subscriber<detector::messagedet>(nh_, topic_marker, 1);
   marker_detection_filter_ =
       new tf::MessageFilter<detector::messagedet>(*marker_detection_sub_, *tf_, odom_frame_id_, 100);
@@ -2034,6 +2034,7 @@ void AmclNode::detectionCallback(const detector::messagedet::ConstPtr& msg)
   {  // si el mapa está vacío o no se ha recibo todavía la info de la cámara, se sale
     return;
   }
+
   boost::recursive_mutex::scoped_lock lr(configuration_mutex_);
   std::vector<Marcador> observation;
   // un bucle por cada marker encontrado

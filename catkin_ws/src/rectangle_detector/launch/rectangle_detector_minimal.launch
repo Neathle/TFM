@@ -20,12 +20,12 @@
         <param name="draw_intersections" value="true" />
         <param name="draw_graph" value="true" />
         <param name="draw_trapezoids" value="true" />
-
         <remap from="/rectangle_detector/detections" to="/detected_markers"/>
+
 
     </node>
         
-    <node pkg="image_publisher" type="image_publisher" name="image_publisher" args="/home/neathle/Desktop/German/marker_rviz.png" >
+    <!-- <node pkg="image_publisher" type="image_publisher" name="image_publisher" args="/home/neathle/Desktop/German/marker_rviz.png" >
 
         <param name="flip_horizontal" value="false" />
         <param name="flip_vertical" value="false" />
@@ -33,6 +33,6 @@
         <param name="publish_rate" value="1" />
         <param name="camera_info_url" value="file://$(find rectangle_detector)/config/rgb.yaml" />  
 
-    </node>
+    </node> -->
 
 </launch>

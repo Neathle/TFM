@@ -23,7 +23,6 @@
 
     <!-- 5. Rectangle Detector Node-->
     <include file="$(find rectangle_detector)/launch/rectangle_detector_minimal.launch">
-        <!-- <remap from="/rectangle_detector/detections" to="/detected_markers"/> -->
     </include>
 
 </launch>

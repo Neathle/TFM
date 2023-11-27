@@ -20,7 +20,7 @@
     <arg name="base_frame_robot" default="base_footprint"/>
     <arg name="global_frame" default="map"/>
     <arg name="camera_link" default="xtion_rgb_optical_frame"/>
-    <arg name="camera_topic" default="xtion/rgb/image_rect_color"/>
+    <arg name="camera_topic" default="camera_info"/>
 
     <arg name="topic_output_video" default="image_converter/output_video"/>
     <arg name="topic_marker" default="detected_markers"/>   
