@@ -36,6 +36,8 @@ private:
     int rectImg_drawing_width_ = 2;
     float whiteness_threshold_ = 0.95;
     ros::Time image_stamp_; 
+    ros::Time last_execution_ = ros::Time::now();
+    double execution_period_ = 0.1;
 
     cv::RNG rng_ = cv::RNG(0xFFFFFFFF);
     cv::Ptr<cv::ximgproc::FastLineDetector> fld = cv::ximgproc::createFastLineDetector(

@@ -23,7 +23,7 @@ using namespace cv;
 using namespace std;
 
 class Marcador{
-    private:
+    public:
         int mapID;
         int sectorID;
         int markerID;
@@ -36,6 +36,7 @@ class Marcador{
         cv::RotatedRect rect;
         std::vector<geometry_msgs::Point> PositionCorners3d;
         std::vector<geometry_msgs::Transform> ToCorners;
+        std::vector<geometry_msgs::Point> ReltoCam;
 
     public:
         void MarkerPoints(std::vector<cv::Point2f> markerPoints);
@@ -68,5 +69,4 @@ class Marcador{
         std::vector<geometry_msgs::Point> getRelativeCoordinates(void);
         void setCorner(geometry_msgs::Point Corner);
 
-        std::vector<geometry_msgs::Point> ReltoCam;
 };

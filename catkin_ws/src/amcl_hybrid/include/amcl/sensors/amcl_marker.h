@@ -108,7 +108,7 @@ private:
 private:
   std::vector<size_t> FilterPointsByFOV(geometry_msgs::Pose CamaraMundo, amcl::AMCLMarker* self);
 
-private:
+public:
   void LoadCameraInfo(void);
   // #%
 private:

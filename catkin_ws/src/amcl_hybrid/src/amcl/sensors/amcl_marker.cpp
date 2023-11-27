@@ -141,14 +141,29 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
     quat.setRPY(0, 0, pose.v[2]);
     tf::quaternionTFToMsg(quat, quat_msg);
     sample_pose.orientation = quat_msg;
+    
+    // *** ADAPT MARKER MAP POINTS TO THE PARTICLE ***
 
     // STEP 1. Proyect all points relative to the camera, points should maintain marker ownership
     // Points are stored in the field map[n].ReltoCam
     self->CalculateRelativePose(sample_pose, self);
 
+    std::cout << "ReltoCam first rectangle in map:" << std::endl;
+    for(const auto &point : self->map[0].ReltoCam) {
+        std::cout << "  Point: (" << point.x << ", " << point.y << ", " << point.z << ")" << std::endl;
+    }
+
     // STEP 2. Filter points with the implicit equation of the camera, discard markers where all points are not
     // STEP    maintained
     std::vector<size_t> filtered_marker_indices = self->FilterPointsByFOV(sample_pose, self);
+
+    std::stringstream ss;
+    ss << "Filter Indices: [";
+    for(const auto &index : filtered_marker_indices) {
+        ss <<  index << ", ";
+    }
+    ss << "]\n";
+    std::cout << ss.str();
 
     // STEP 3. Project those points to the image plane
     std::vector<std::vector<cv::Point2d>> projected_markers(filtered_marker_indices.size());
@@ -156,22 +171,33 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
         filtered_marker_indices.begin(), filtered_marker_indices.end(), projected_markers.begin(),
         [self](size_t j /*j: filtered marker index*/) { return self->projectPoints(self->map[j].ReltoCam); });
 
+    for (const auto& marker : projected_markers) {
+        std::cout << "Projected" << std::endl;
+        for (const auto& point : marker) {
+            std::cout << "  Point: (" << point.x << ", " << point.y << ")" << std::endl;
+        }
+    }
+
     // STEP 4. For each map marker, for each detected marker calculate the error, keep the detected marker with min
     // STEP    error, threshold error
     // projected_markers are from the map, observations are from the detector, we want for each marker to iterate
     // throught eh obserations and find that with min distance to the corners. The result will be according to the
     // specified formula and in the form of a vector of floats (z) and we need to accumulate it into ztot and add it to
     // total_marker_error, apply the formula and add it to pz and p (pz³)
-    std::vector<std::pair<size_t, float>> ztot_vector(filtered_marker_indices.size());
-    std::transform(filtered_marker_indices.begin(), filtered_marker_indices.end(), ztot_vector.begin(),
-                   [&self, &observation, &projected_markers](size_t j /*j: filtered marker index*/) {
-                     return self->calculateError(observation, projected_markers[j]);  // TODO: adapt the function
-                   });
+    // std::vector<std::pair<size_t, float>> ztot_vector(filtered_marker_indices.size());
+    // std::transform(projected_markers.begin(), projected_markers.end(), ztot_vector.begin(),
+    //                [&self, &observation](std::vector<cv::Point2d> projected_marker) {
+    //                  return self->calculateError(observation, projected_marker);  // TODO: Verify adapt the function
+    //                });
 
-    std::for_each(ztot_vector.begin(), ztot_vector.end(), [&](std::pair<size_t, float> ztot) {
-      total_error_marker += ztot.second;
-      p += std::pow(self->landa * exp(-self->landa * ztot.second), 3);
-    });
+    // for (const auto& pair : ztot_vector) {
+    //     std::cout << "Ztot: (" << pair.first << ", " << pair.second << ")" << std::endl;
+    // }
+
+    // std::for_each(ztot_vector.begin(), ztot_vector.end(), [&](std::pair<size_t, float> ztot) {
+    //   total_error_marker += ztot.second;
+    //   p += std::pow(self->landa * exp(-self->landa * ztot.second), 3);
+    // });
 
     // Show info position and orientation of each pointcloud
     // std::cout << "  Pos-> x:" << sample_pose.position.x << "  y:" << sample_pose.position.y;
@@ -263,10 +289,10 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
   return (total_weight);
 }
 
-std::vector<Marcador> AMCLMarker::matchDetectionsToMapMarkers(std::vector<Marcador> observation)
-{
-  //
-}
+// std::vector<Marcador> AMCLMarker::matchDetectionsToMapMarkers(std::vector<Marcador> observation)
+// {
+//   //
+// }
 
 // ##### esta función es la que calcula el error sabiendo donde esta la proyección teórica (la recibida) y la del mapa
 std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& observation,
@@ -280,6 +306,7 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
   std::vector<float> observation_errors(observation.size());
   for (size_t j = 0; j < observation.size(); j++)
   {
+    ROS_INFO_STREAM("PROCESSING MARKER " << j);
     std::vector<cv::Point2f> projection_detected = observation[j].getMarkerPoints();
 
     // normalizing error with width and height of image.
@@ -288,6 +315,8 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
     // cout << "   Error:" << endl;
     for (int i = 0; i < 4; i++)
     {
+      // print values of all elements involved 
+      ROS_INFO_STREAM("   PROCESSING CORNER " << i << "Map: " << projection_map[i].x << ", " << projection_map[i].y << "Img size: " << image_width << ", " << image_height);
       float errorx, errory;
       float error = 0.0;
       errorx = abs(projection_map[i].x - projection_detected[i].x) /
@@ -306,6 +335,7 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
     observation_errors[j] = errorv;
   }
 
+  ROS_INFO_STREAM("CALCULATING MIN ERROR");
   size_t min_error_index =
       std::distance(observation_errors.begin(), std::min_element(observation_errors.begin(), observation_errors.end()));
 
@@ -314,7 +344,7 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
   if (min_error / 4 > sqrt(2))
   {
     // waitKey();
-    ROS_ERROR("ERROR: Fail detected Marker -> error is higher to sqrt(2)");
+    ROS_WARN_STREAM("Fail detected Marker -> error is higher to sqrt(2): " << min_error / 4);
     // std::cout << "ERROR: Fail detected Marker -> error is higher to sqrt(2)" << std::endl;
   }
 
@@ -346,6 +376,8 @@ std::vector<cv::Point2d> AMCLMarker::projectPoints(std::vector<geometry_msgs::Po
     Coord.y = cam_trans_coord_st.point.y;
     Coord.z = cam_trans_coord_st.point.z;
     Pixel = this->pin_model.project3dToPixel(Coord);
+    if (Pixel.x > pin_model.cameraInfo().width || Pixel.y > pin_model.cameraInfo().height) continue; // points out of frame
+  //TODO: NEGATIVE FILTER
     pixel_corner.x = Pixel.x;
     pixel_corner.y = Pixel.y;
     pixel_corner.z = 0;
@@ -363,15 +395,14 @@ void AMCLMarker::LoadCameraInfo(void)
   //_____________________________________________________________________________________________________
   sensor_msgs::CameraInfo cam_inf_ed;
   // if (this->simulation == 1){
-  cam_inf_ed.header.frame_id = "Cam1";
-  cam_inf_ed.height = 679;
-  cam_inf_ed.width = 604;
+  cam_inf_ed.header.frame_id = "xtion_rgb_optical_frame";
+  cam_inf_ed.height = 480;
+  cam_inf_ed.width = 640;
   cam_inf_ed.distortion_model = "plumb_bob";
-  double Da[5] = { -0.2601958609577983, 0.05505240192232372, 0.0, -0.0045449850126361765, 0.0 };
-  boost::array<double, 9ul> K = { { 174.746839097, 0.0, 906.0, 0.0, 174.746839097, 339.5, 0.0, 0.0, 1.0 } };
+  double Da[5] = { 0.02019943683275026, -0.08339482869293142, -0.004265862094806434, 0.0041277952286131285, 0.0 };
+  boost::array<double, 9ul> K = { { 515.8668782266329, 0.0, 332.2750817773881, 0.0, 516.2546881081752, 237.2817318673198, 0.0, 0.0, 1.0 } };
   boost::array<double, 9ul> R = { { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 } };
-  boost::array<double, 12ul> P = { { 174.64077512103418, 0.0, 906.0, 0.0, 0.0, 174.64077512103418, 339.5, 0.0, 0.0, 0.0,
-                                     1.0, 0.0 } };
+  boost::array<double, 12ul> P = { { 513.1033325195312, 0.0, 335.3405633298644, 0.0, 0.0, 516.9007568359375, 235.73558310651788, 0.0, 0.0, 0.0, 1.0, 0.0 } };
   std::vector<double> D(Da, Da + (sizeof(Da) / sizeof(Da[0])));
   cam_inf_ed.D = D;
   cam_inf_ed.K = K;
@@ -383,26 +414,26 @@ void AMCLMarker::LoadCameraInfo(void)
   cam_inf_ed.roi.width = 0;
   //}
   // if (this->simulation == 0){
-  camMatrix = cv::Mat(3, 3, CV_32F);
-  camMatrix.at<float>(0, 0) = 8.5101024687735935e+02;
-  camMatrix.at<float>(0, 1) = -2.2255059056366439e-01;
-  camMatrix.at<float>(0, 2) = 6.5571465382877625e+02;
-  camMatrix.at<float>(1, 0) = 0.0;
-  camMatrix.at<float>(1, 1) = 8.5170243585411265e+02;
-  ;
-  camMatrix.at<float>(1, 2) = 5.1216084358475405e+02;
-  camMatrix.at<float>(2, 0) = 0.0;
-  camMatrix.at<float>(2, 1) = 0.0;
-  camMatrix.at<float>(2, 2) = 1.0;
+  // camMatrix = cv::Mat(3, 3, CV_32F);
+  // camMatrix.at<float>(0, 0) = 8.5101024687735935e+02;
+  // camMatrix.at<float>(0, 1) = -2.2255059056366439e-01;
+  // camMatrix.at<float>(0, 2) = 6.5571465382877625e+02;
+  // camMatrix.at<float>(1, 0) = 0.0;
+  // camMatrix.at<float>(1, 1) = 8.5170243585411265e+02;
+  // ;
+  // camMatrix.at<float>(1, 2) = 5.1216084358475405e+02;
+  // camMatrix.at<float>(2, 0) = 0.0;
+  // camMatrix.at<float>(2, 1) = 0.0;
+  // camMatrix.at<float>(2, 2) = 1.0;
 
-  distCoeff = cv::Mat(4, 1, CV_32F);
-  distCoeff.at<float>(0, 0) = -4.2648301140911193e-01;
-  distCoeff.at<float>(1, 0) = 3.1105618959437248e-01;
-  distCoeff.at<float>(2, 0) = -1.3775384616268102e-02;
-  distCoeff.at<float>(3, 0) = -1.9560559208606078e-03;
-  distCoeff.at<float>(3, 0) = 0;
+  // distCoeff = cv::Mat(4, 1, CV_32F);
+  // distCoeff.at<float>(0, 0) = -4.2648301140911193e-01;
+  // distCoeff.at<float>(1, 0) = 3.1105618959437248e-01;
+  // distCoeff.at<float>(2, 0) = -1.3775384616268102e-02;
+  // distCoeff.at<float>(3, 0) = -1.9560559208606078e-03;
+  // distCoeff.at<float>(3, 0) = 0;
 
-  xi = 1.5861076761699640e+00;
+  // xi = 1.5861076761699640e+00;
 
   // }
 
@@ -502,7 +533,7 @@ void AMCLMarker::CalculateRelativePose(geometry_msgs::Pose CamaraMundo, amcl::AM
 // Method to filter points to project from the map to a camera based on the implicit equation of the cone
 std::vector<size_t> AMCLMarker::FilterPointsByFOV(geometry_msgs::Pose CamaraMundo, amcl::AMCLMarker* self)
 {
-  std::vector<size_t> filtered_marker_indices;  // preallocate vector of indices
+  std::vector<size_t> filtered_marker_indices;  // vector of indices
   const double dfov = std::sqrt(std::pow(self->pin_model.fovX(), 2) +
                                 std::pow(self->pin_model.fovY(), 2));  // use fovD for including all possible points
 
@@ -518,13 +549,13 @@ std::vector<size_t> AMCLMarker::FilterPointsByFOV(geometry_msgs::Pose CamaraMund
       if (corner.x < 0)
         break;  // do not bother calculating more corners if a single one fails
 
-      // STEP 2. Keep points inside the cone: x^2 + (y^2 + z^2) / tan^2(diagonal_fov / 2) < 1
-      if (std::pow(corner.x, 2) + (std::pow(corner.y, 2) + std::pow(corner.z, 2)) / std::pow(std::tan(dfov) / 2, 2) < 1)
+      // STEP 2. Keep points inside the cone: y^2 + x^2 <= (tan(dfov / 2))^2 * z^2
+      if (std::pow(corner.y, 2) + std::pow(corner.x, 2) <= std::pow(std::tan(dfov / 2), 2) * std::pow(corner.z, 2))
       {
         corners_accepted.push_back(true);
-      }
-      else
+      } else {
         break;  // do not bother calculating more corners if a single one fails
+      }
     }
 
     // STEP 3. Only markers with all corners inside the cone shall be projected

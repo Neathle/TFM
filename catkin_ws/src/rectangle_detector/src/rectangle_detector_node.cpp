@@ -28,6 +28,7 @@ RectangleDetectorNode::RectangleDetectorNode()
     nh_.getParam("rectangle_detector/draw_trapezoids", draw_trapezoids_);
     nh_.getParam("rectangle_detector/whiteness_threshold", whiteness_threshold_);
     nh_.getParam("rectangle_detector/angle_threshold", angle_threshold_);
+    nh_.getParam("rectangle_detector/execution_period", execution_period_);
 
     //initialize publishers and subscribers
     im_pub_lines_ = nh_.advertise<sensor_msgs::Image>("/rectangle_detector/lines", 1);
@@ -47,6 +48,10 @@ RectangleDetectorNode::RectangleDetectorNode()
 // Callback for intersections detector mode
 void RectangleDetectorNode::imageCallbackIntersections(const sensor_msgs::ImageConstPtr& msg)
 {
+    ros::Time now = ros::Time::now();
+    if ((now - last_execution_).toSec() < execution_period_) return;
+    last_execution_ = now;
+
     //convert image to cv::Mat
     cv_bridge::CvImagePtr cv_ptr;
     try
@@ -75,6 +80,10 @@ void RectangleDetectorNode::imageCallbackIntersections(const sensor_msgs::ImageC
 // Callback for trapezoids detection mode
 void RectangleDetectorNode::imageCallbackTrapezoids(const sensor_msgs::ImageConstPtr& msg)
 {
+    ros::Time now = ros::Time::now();
+    if ((now - last_execution_).toSec() < execution_period_) return;
+    last_execution_ = now;
+    
     //convert image to cv::Mat
     cv_bridge::CvImagePtr cv_ptr;
     try

@@ -2318,7 +2318,7 @@ void AmclNode::detectionCallback(const detector::messagedet::ConstPtr& msg)
         tf::Transform tmp_tf(tf::createQuaternionFromYaw(marker_hyps[max_weight_hyp].pf_pose_mean.v[2]),
                              tf::Vector3(marker_hyps[max_weight_hyp].pf_pose_mean.v[0],
                                          marker_hyps[max_weight_hyp].pf_pose_mean.v[1], 0.0));
-        // cout<<base_frame_id_<<endl;
+        // cout<<base_frame_id_<<endl; //TODO: Revisar por Paloma
         tf::Stamped<tf::Pose> tmp_tf_stamped(tmp_tf.inverse(), ros::Time(0), base_frame_id_);
         // cout<<odom_frame_id_<<endl;
         this->tf_->transformPose(odom_frame_id_, tmp_tf_stamped, odom_to_map);
