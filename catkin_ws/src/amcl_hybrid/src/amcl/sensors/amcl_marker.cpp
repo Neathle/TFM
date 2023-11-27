@@ -189,20 +189,21 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
     // throught eh obserations and find that with min distance to the corners. The result will be according to the
     // specified formula and in the form of a vector of floats (z) and we need to accumulate it into ztot and add it to
     // total_marker_error, apply the formula and add it to pz and p (pz³)
-    // std::vector<std::pair<size_t, float>> ztot_vector(filtered_marker_indices.size());
-    // std::transform(projected_markers.begin(), projected_markers.end(), ztot_vector.begin(),
-    //                [&self, &observation](std::vector<cv::Point2d> projected_marker) {
-    //                  return self->calculateError(observation, projected_marker);  // TODO: Verify adapt the function
-    //                });
+    std::vector<std::pair<size_t, float>> ztot_vector(filtered_marker_indices.size());
+    std::transform(projected_markers.begin(), projected_markers.end(), ztot_vector.begin(),
+                   [&self, &observation](std::vector<cv::Point2d> projected_marker) {
+                     return self->calculateError(observation, projected_marker);  // TODO: Verify adapt the function
+                   });
 
-    // for (const auto& pair : ztot_vector) {
-    //     std::cout << "Ztot: (" << pair.first << ", " << pair.second << ")" << std::endl;
-    // }
+    if(print_steps){
+    for (const auto& pair : ztot_vector) {
+        std::cout << "Ztot: (" << pair.first << ", " << pair.second << ")" << std::endl;
+    }}
 
-    // std::for_each(ztot_vector.begin(), ztot_vector.end(), [&](std::pair<size_t, float> ztot) {
-    //   total_error_marker += ztot.second;
-    //   p += std::pow(self->landa * exp(-self->landa * ztot.second), 3);
-    // });
+    std::for_each(ztot_vector.begin(), ztot_vector.end(), [&](std::pair<size_t, float> ztot) {
+      total_error_marker += ztot.second;
+      p += std::pow(self->landa * exp(-self->landa * ztot.second), 3);
+    });
 
     // Show info position and orientation of each pointcloud
     // std::cout << "  Pos-> x:" << sample_pose.position.x << "  y:" << sample_pose.position.y;
@@ -311,7 +312,7 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
   std::vector<float> observation_errors(observation.size());
   for (size_t j = 0; j < observation.size(); j++)
   {
-    ROS_INFO_STREAM("PROCESSING MARKER " << j);
+    ROS_DEBUG_STREAM("PROCESSING MARKER " << j);
     std::vector<cv::Point2f> projection_detected = observation[j].getMarkerPoints();
 
     // normalizing error with width and height of image.
@@ -321,7 +322,7 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
     for (int i = 0; i < 4; i++)
     {
       // print values of all elements involved 
-      ROS_INFO_STREAM("   PROCESSING CORNER " << i << "Map: " << projection_map[i].x << ", " << projection_map[i].y << "Img size: " << image_width << ", " << image_height);
+      ROS_DEBUG_STREAM("   PROCESSING CORNER " << i << " Map: " << projection_map[i].x << ", " << projection_map[i].y << " Img size: " << image_width << ", " << image_height);
       float errorx, errory;
       float error = 0.0;
       errorx = abs(projection_map[i].x - projection_detected[i].x) /
@@ -340,13 +341,12 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
     observation_errors[j] = errorv;
   }
 
-  ROS_INFO_STREAM("CALCULATING MIN ERROR");
   size_t min_error_index =
       std::distance(observation_errors.begin(), std::min_element(observation_errors.begin(), observation_errors.end()));
 
   float min_error = observation_errors[min_error_index];
-
-  if (min_error / 4 > sqrt(2))
+  ROS_INFO_STREAM("Minimum error: " << min_error);
+  if (min_error / 4 > sqrt(2)) //TODO: set this threshold to a reasonable value, curretly it is not filtering
   {
     // waitKey();
     ROS_WARN_STREAM("Fail detected Marker -> error is higher to sqrt(2): " << min_error / 4);
@@ -381,8 +381,7 @@ std::vector<cv::Point2d> AMCLMarker::projectPoints(std::vector<geometry_msgs::Po
     Coord.y = cam_trans_coord_st.point.y;
     Coord.z = cam_trans_coord_st.point.z;
     Pixel = this->pin_model.project3dToPixel(Coord);
-    if (Pixel.x > pin_model.cameraInfo().width || Pixel.y > pin_model.cameraInfo().height) continue; // points out of frame
-  //TODO: NEGATIVE FILTER
+    // if (Pixel.x > pin_model.cameraInfo().width || Pixel.y > pin_model.cameraInfo().height) continue; // TODO: BUG, REMOVE WHOLE MARKER
     pixel_corner.x = Pixel.x;
     pixel_corner.y = Pixel.y;
     pixel_corner.z = 0;
