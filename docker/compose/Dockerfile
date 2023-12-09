@@ -99,6 +99,7 @@ RUN apt-get update && apt-get install -y ros-noetic-navigation ros-noetic-tf2-to
 RUN pip install bagpy
 RUN add-apt-repository ppa:joseluisblancoc/mrpt-stable
 RUN apt install libmrpt-dev mrpt-apps -y
+RUN pip install evo --upgrade --no-binary evo
 
 # clang-format
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
