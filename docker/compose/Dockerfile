@@ -16,9 +16,12 @@ RUN useradd -M $USERNAME && \
         usermod  --uid ${UID} $USERNAME && \
         groupmod --gid ${GID} $USERNAME
 
+# cleanup
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # INSTALL DEPENDENCIES
-RUN apt-get update && apt-get install apt-utils -y
-RUN apt-get install wget git python-is-python3 python3-pip -y
+RUN apt-get update && apt-get install wget git python-is-python3 python3-pip -y
 RUN apt-get update && apt-get install -y \
       libsqlite3-dev \
       libpcl-dev \

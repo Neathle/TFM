@@ -35,6 +35,7 @@ private:
     int lineImg_drawing_width_ = 2;
     int rectImg_drawing_width_ = 2;
     float whiteness_threshold_ = 0.95;
+    int max_num_trapezoids_ = 50;
     ros::Time image_stamp_; 
     ros::Time last_execution_ = ros::Time::now();
     double execution_period_ = 0.1;

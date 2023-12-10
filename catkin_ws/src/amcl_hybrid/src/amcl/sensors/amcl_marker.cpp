@@ -345,14 +345,10 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
       std::distance(observation_errors.begin(), std::min_element(observation_errors.begin(), observation_errors.end()));
 
   float min_error = observation_errors[min_error_index];
-  ROS_INFO_STREAM("Minimum error: " << min_error);
-  if (min_error / 4 > sqrt(2)) //TODO: set this threshold to a reasonable value, curretly it is not filtering
+  if (min_error > 1) //TODO: set this threshold to a reasonable value, curretly it is not filtering
   {
-    // waitKey();
-    ROS_WARN_STREAM("Fail detected Marker -> error is higher to sqrt(2): " << min_error / 4);
-    // std::cout << "ERROR: Fail detected Marker -> error is higher to sqrt(2)" << std::endl;
+    ROS_WARN_STREAM("Failed to detect Marker -> error is higher than 1: " << min_error ); 
   }
-
   return std::make_pair(min_error_index, min_error);  // retornamos el id y error minimo
 }
 
