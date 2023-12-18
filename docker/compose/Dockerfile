@@ -63,42 +63,43 @@ ENV NO_AT_BRIDGE 1
 RUN rosdep fix-permissions && rosdep update
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 
-# TIAGO INSTALL
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y git wget ipython3 python3-rosinstall \
-        python-is-python3 ros-noetic-actionlib-tools ros-noetic-moveit-commander
+# # TIAGO INSTALL
+# ARG DEBIAN_FRONTEND=noninteractive
+# RUN apt-get update && apt-get install -y git wget ipython3 python3-rosinstall \
+#         python-is-python3 ros-noetic-actionlib-tools ros-noetic-moveit-commander
 
-WORKDIR /tiago_ws
-RUN chmod agu+rwx /tiago_ws
+# WORKDIR /tiago_ws
+# RUN chmod agu+rwx /tiago_ws
 
-RUN wget https://raw.githubusercontent.com/pal-robotics/tiago_tutorials/noetic-devel/tiago_public-noetic.rosinstall
-RUN rosinstall src /opt/ros/noetic tiago_public-noetic.rosinstall
+# RUN wget https://raw.githubusercontent.com/pal-robotics/tiago_tutorials/noetic-devel/tiago_public-noetic.rosinstall
+# RUN rosinstall src /opt/ros/noetic tiago_public-noetic.rosinstall
 
-RUN rosdep fix-permissions && rosdep update
-RUN rosdep install -y --from-paths src --ignore-src --rosdistro noetic --skip-keys "urdf_test omni_drive_controller orocos_kdl pal_filters libgazebo9-dev pal_usb_utils speed_limit_node camera_calibration_files pal_moveit_plugins pal_startup_msgs pal_local_joint_control pal_pcl_points_throttle_and_filter current_limit_controller hokuyo_node dynamixel_cpp pal_moveit_capabilities pal_pcl dynamic_footprint gravity_compensation_controller pal-orbbec-openni2 pal_loc_measure pal_map_manager ydlidar_ros_driver"
+# RUN rosdep fix-permissions && rosdep update
+# RUN rosdep install -y --from-paths src --ignore-src --rosdistro noetic --skip-keys "urdf_test omni_drive_controller orocos_kdl pal_filters libgazebo9-dev pal_usb_utils speed_limit_node camera_calibration_files pal_moveit_plugins pal_startup_msgs pal_local_joint_control pal_pcl_points_throttle_and_filter current_limit_controller hokuyo_node dynamixel_cpp pal_moveit_capabilities pal_pcl dynamic_footprint gravity_compensation_controller pal-orbbec-openni2 pal_loc_measure pal_map_manager ydlidar_ros_driver"
 
-RUN apt-get update && apt-get install -y python3-catkin-tools 
+# RUN apt-get update && apt-get install -y python3-catkin-tools 
 
-RUN git clone https://github.com/ros-drivers/mocap_optitrack/ -b master src/mocap_optitrack
+# RUN git clone https://github.com/ros-drivers/mocap_optitrack/ -b master src/mocap_optitrack
 
-RUN source /opt/ros/noetic/setup.bash && \
-    catkin build -DCATKIN_ENABLE_TESTING=0 -j $(expr `nproc`)
+# RUN source /opt/ros/noetic/setup.bash && \
+#     catkin build -DCATKIN_ENABLE_TESTING=0 -j $(expr `nproc`)
 
 # install net utils
-RUN apt-get update && apt-get install net-tools nano traceroute -y
+RUN apt-get update && apt-get install net-tools nano vim traceroute -y
 
-# install realsense
-RUN apt-get update && apt-get install ros-noetic-realsense2-camera ros-noetic-realsense2-description curl -y
-RUN curl -o /etc/udev/rules.d/99-realsense-libusb.rules https://raw.githubusercontent.com/IntelRealSense/librealsense/master/config/99-realsense-libusb.rules
-RUN curl -o /etc/udev/rules.d/99-realsense-d4xx-mipi-dfu.rules https://github.com/IntelRealSense/librealsense/blob/master/config/99-realsense-d4xx-mipi-dfu.rules
+# # install realsense
+# RUN apt-get update && apt-get install ros-noetic-realsense2-camera ros-noetic-realsense2-description curl -y
+# RUN curl -o /etc/udev/rules.d/99-realsense-libusb.rules https://raw.githubusercontent.com/IntelRealSense/librealsense/master/config/99-realsense-libusb.rules
+# RUN curl -o /etc/udev/rules.d/99-realsense-d4xx-mipi-dfu.rules https://github.com/IntelRealSense/librealsense/blob/master/config/99-realsense-d4xx-mipi-dfu.rules
 
 
 # install other requirements
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y ros-noetic-navigation ros-noetic-tf2-tools ros-noetic-tf2-sensor-msgs \
                                          ros-noetic-mrpt-navigation imagemagick
 RUN pip install bagpy
-RUN add-apt-repository ppa:joseluisblancoc/mrpt-stable
-RUN apt install libmrpt-dev mrpt-apps -y
+# RUN add-apt-repository ppa:joseluisblancoc/mrpt-stable
+# RUN apt install libmrpt-dev mrpt-apps -y
 
 # clang-format
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -

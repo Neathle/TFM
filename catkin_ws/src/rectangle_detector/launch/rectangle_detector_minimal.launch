@@ -3,7 +3,7 @@
 
     <node name="rectangle_detector" pkg="rectangle_detector" type="rectangle_detector_node"  output="screen">
 
-        <param name="image_topic" value="/rgb" />
+        <param name="image_topic" value="/xtion/rgb/image_rect_color" />
         <param name="intersections_detector_mode" value="false" />
 
         <param name="elongation_factor" value="1.1" />

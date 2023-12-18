@@ -663,7 +663,7 @@ AmclNode::AmclNode()
   // ground_truth_subs=nh_.subscribe("/Doris/ground_truth/state",1, &AmclNode::groundTruthCallback,this);
   if (simulation == 0)
   {
-    real_odom_subs = nh_.subscribe(odom_frame_id_, 1, &AmclNode::realOdomCallback, this);
+    real_odom_subs = nh_.subscribe("/mobile_base_controller/odom", 1, &AmclNode::realOdomCallback, this);
     path_pub_r = nh_.advertise<nav_msgs::Path>("reference_path", 1);
     yaw_amcl = nh_.advertise<std_msgs::Float64>("amcl_yaw", 1);
     yaw_odom = nh_.advertise<std_msgs::Float64>("odom_yaw", 1);
