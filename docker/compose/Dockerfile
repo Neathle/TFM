@@ -16,9 +16,12 @@ RUN useradd -M $USERNAME && \
         usermod  --uid ${UID} $USERNAME && \
         groupmod --gid ${GID} $USERNAME
 
+# cleanup
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # INSTALL DEPENDENCIES
-RUN apt-get update && apt-get install apt-utils -y
-RUN apt-get install wget git python-is-python3 python3-pip -y
+RUN apt-get update && apt-get install wget git python-is-python3 python3-pip -y
 RUN apt-get update && apt-get install -y \
       libsqlite3-dev \
       libpcl-dev \
@@ -98,8 +101,9 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y ros-noetic-navigation ros-noetic-tf2-tools ros-noetic-tf2-sensor-msgs \
                                          ros-noetic-mrpt-navigation imagemagick
 RUN pip install bagpy
-# RUN add-apt-repository ppa:joseluisblancoc/mrpt-stable
-# RUN apt install libmrpt-dev mrpt-apps -y
+RUN add-apt-repository ppa:joseluisblancoc/mrpt-stable
+RUN apt install libmrpt-dev mrpt-apps -y
+RUN pip install evo --upgrade --no-binary evo
 
 # clang-format
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -

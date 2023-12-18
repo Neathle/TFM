@@ -22,6 +22,48 @@
         <param name="draw_trapezoids" value="true" />
         <remap from="/rectangle_detector/detections" to="/detected_markers"/>
 
+        <param name="intersections_detector_mode" value="false" /> <!-- Feature detector mode, publisher not implemented -->
+
+        <!-- TUNING GUIDE:
+            Run the node with a representative sample image, calibration depends heavily on the camera, but on the environment
+            as well. The node publishes 3 images: lines, graph and rectangles, the expected behaviour is that the node detects
+            most rectangles but without reaching max_num_trapezoids. Recommended tuning steps:
+
+            1. Display the rgb image, identify rectangles and remember where they are.
+
+            2. Display the lines image, if rectangle edges are not being detected, modify FLD parameters in rectangle_detector_node.hpp,
+                if edges are detected but do not connect, increase elongation_factor and elongation_adder. Never use elongation params 
+                lower than 1, if the elongation params are too high, false corners are prone to appear.
+            
+            3. Display the graph image, corners appear in white and lines in green, if there are missing edges increase whiteness_threshold,
+                if there are too many lines, decrease it. If there are multiple detected points for a single corner, increase nms_threshold,
+                nms will also reduce the number of lines. lineImg_drawing_width drastically affects the detector, it should be adjusted so
+                that lines are not too thin or wide in the lines image, it only depends on the resolution of the camera.
+
+            4. Display the rectangles image, rectangles appear as coloured in a grayscale version of the image. There are many parameters to
+                finish configuring the detector:
+                    - *area_factors: filter rectangles that aree too large or too small, they are factors of the total image area
+                    - compactness: Polsby-Popper compactness, filters rectangles that are too long and thin
+                    - length_diff: Compares the length of the longest and the shortest edge, filters rectangles that are closer to a triangle
+                    - angle: Chechs that the angles of the trapezoid are close to 90º, also check that at least one of the sides is horizontal
+                             or vertical.
+        -->
+        <param name="max_num_trapezoids" value="50" /> <!-- Permissive higher -->
+        <param name="elongation_factor" value="1.35" /> <!-- Permissive higher -->
+        <param name="whiteness_threshold" value="0.25" /> <!-- Permissive lower -->
+        <param name="nms_threshold" value="2" /> <!-- Permissive lower -->
+        <param name="lineImg_drawing_width" value="1" /> <!-- Permissive higher -->
+        <param name="rects_min_area_factor" value="0.00005" /> <!-- Permissive lower -->
+        <param name="rects_max_area_factor" value="0.99" /> <!-- Permissive higher -->
+        <param name="compactness_threshold" value="0.3" /> <!-- Permissive lower -->
+        <param name="length_diff_threshold" value="0.001" /> <!-- Permissive lower -->
+        <param name="angle_threshold" value="1.0" /> <!-- Permissive higher -->
+        
+        <param name="draw_intersections" value="true" /> <!-- Turn off for performance -->
+        <param name="draw_graph" value="true" /> <!-- Turn off for performance -->
+        <param name="draw_trapezoids" value="true" /> <!-- Turn off for performance -->
+        <param name="rectImg_drawing_width" value="2" /> <!-- Aesthetics -->
+
 
     </node>
         
