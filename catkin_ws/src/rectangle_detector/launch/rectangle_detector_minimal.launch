@@ -3,25 +3,7 @@
 
     <node name="rectangle_detector" pkg="rectangle_detector" type="rectangle_detector_node"  output="screen">
 
-        <param name="image_topic" value="/xtion/rgb/image_rect_color" />
-        <param name="intersections_detector_mode" value="false" />
-
-        <param name="elongation_factor" value="1.1" />
-        <param name="rects_min_area_factor" value="0.0005" />
-        <param name="rects_max_area_factor" value="0.8" />
-        <param name="nms_threshold" value="4" />
-        <param name="lineImg_drawing_width" value="1" />
-        <param name="rectImg_drawing_width" value="1" />
-        <param name="compactness_threshold" value="0.3" />
-        <param name="length_diff_threshold" value="0.2" />
-        <param name="whiteness_threshold" value="0.35" />
-        <param name="angle_threshold" value="0.6" />
-
-        <param name="draw_intersections" value="true" />
-        <param name="draw_graph" value="true" />
-        <param name="draw_trapezoids" value="true" />
-        <remap from="/rectangle_detector/detections" to="/detected_markers"/>
-
+        <param name="image_topic" value="/rgb" />
         <param name="intersections_detector_mode" value="false" /> <!-- Feature detector mode, publisher not implemented -->
 
         <!-- TUNING GUIDE:
@@ -49,15 +31,15 @@
                              or vertical.
         -->
         <param name="max_num_trapezoids" value="50" /> <!-- Permissive higher -->
-        <param name="elongation_factor" value="1.35" /> <!-- Permissive higher -->
+        <param name="elongation_factor" value="1.15" /> <!-- Permissive higher -->
         <param name="whiteness_threshold" value="0.25" /> <!-- Permissive lower -->
         <param name="nms_threshold" value="2" /> <!-- Permissive lower -->
         <param name="lineImg_drawing_width" value="1" /> <!-- Permissive higher -->
-        <param name="rects_min_area_factor" value="0.00005" /> <!-- Permissive lower -->
-        <param name="rects_max_area_factor" value="0.99" /> <!-- Permissive higher -->
+        <param name="rects_min_area_factor" value="0.0005" /> <!-- Permissive lower -->
+        <param name="rects_max_area_factor" value="0.6" /> <!-- Permissive higher -->
         <param name="compactness_threshold" value="0.3" /> <!-- Permissive lower -->
-        <param name="length_diff_threshold" value="0.001" /> <!-- Permissive lower -->
-        <param name="angle_threshold" value="1.0" /> <!-- Permissive higher -->
+        <param name="length_diff_threshold" value="0.01" /> <!-- Permissive lower -->
+        <param name="angle_threshold" value="0.3" /> <!-- Permissive higher -->
         
         <param name="draw_intersections" value="true" /> <!-- Turn off for performance -->
         <param name="draw_graph" value="true" /> <!-- Turn off for performance -->

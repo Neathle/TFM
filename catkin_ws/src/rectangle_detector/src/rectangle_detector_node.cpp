@@ -240,44 +240,44 @@ float cross(cv::Point2i a, cv::Point2i b)
 // Function to check if the angles of a trapezoid are sufficiently close to 90 degrees
 bool RectangleDetectorNode::trapezoidAnglesTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
 {
-    // // atan2(vectorA.y, vectorA.x) - atan2(vectorB.y,  vectorB.x)
-    // float angle1 = std::atan2(b.y - a.y, b.x - a.x) - std::atan2(c.y - b.y, c.x - b.x);
-    // if (angle1 < 0) angle1 += 2 * CV_PI;
-    // angle1 = std::abs(angle1);
-    // // if angle is not between pi/2-angle_threshold_ and pi/2+angle_threshold_ then return false
-    // if (angle1 < CV_PI / 2 - angle_threshold_ || angle1 > CV_PI / 2 + angle_threshold_) return false;
+    // atan2(vectorA.y, vectorA.x) - atan2(vectorB.y,  vectorB.x)
+    float angle1 = std::atan2(b.y - a.y, b.x - a.x) - std::atan2(c.y - b.y, c.x - b.x);
+    if (angle1 < 0) angle1 += 2 * CV_PI;
+    angle1 = std::abs(angle1);
+    // if angle is not between pi/2-angle_threshold_ and pi/2+angle_threshold_ then return false
+    if (angle1 < CV_PI / 2 - angle_threshold_ || angle1 > CV_PI / 2 + angle_threshold_) return false;
 
-    // float angle2 = std::atan2(c.y - b.y, c.x - b.x) - std::atan2(d.y - c.y, d.x - c.x);
-    // if (angle2 < 0) angle2 += 2 * CV_PI;
-    // angle2 = std::abs(angle2);
-    // if (angle2 < CV_PI / 2 - angle_threshold_ || angle2 > CV_PI / 2 + angle_threshold_) return false;
+    float angle2 = std::atan2(c.y - b.y, c.x - b.x) - std::atan2(d.y - c.y, d.x - c.x);
+    if (angle2 < 0) angle2 += 2 * CV_PI;
+    angle2 = std::abs(angle2);
+    if (angle2 < CV_PI / 2 - angle_threshold_ || angle2 > CV_PI / 2 + angle_threshold_) return false;
 
-    // float angle3 = std::atan2(d.y - c.y, d.x - c.x) - std::atan2(a.y - d.y, a.x - d.x);
-    // if (angle3 < 0) angle3 += 2 * CV_PI;
-    // angle3 = std::abs(angle3);
-    // if (angle3 < CV_PI / 2 - angle_threshold_ || angle3 > CV_PI / 2 + angle_threshold_) return false;
+    float angle3 = std::atan2(d.y - c.y, d.x - c.x) - std::atan2(a.y - d.y, a.x - d.x);
+    if (angle3 < 0) angle3 += 2 * CV_PI;
+    angle3 = std::abs(angle3);
+    if (angle3 < CV_PI / 2 - angle_threshold_ || angle3 > CV_PI / 2 + angle_threshold_) return false;
     
     // ROS_INFO("Rectangle angles %f %f %f", angle1, angle2, angle3);
 
-    // // Check if line AB is mostly horizontal or vertical
-    // if (std::abs(std::atan2(b.y - a.y, b.x - a.x)) < angle_threshold_ 
-    //  || std::abs(std::atan2(b.y - a.y, b.x - a.x) - CV_PI) < angle_threshold_)
-    //     return true;
+    // Check if line AB is mostly horizontal or vertical
+    if (std::abs(std::atan2(b.y - a.y, b.x - a.x)) < angle_threshold_ 
+     || std::abs(std::atan2(b.y - a.y, b.x - a.x) - CV_PI) < angle_threshold_)
+        return true;
 
-    // // Check if line BC is mostly horizontal or vertical
-    // if (std::abs(std::atan2(c.y - b.y, c.x - b.x)) < angle_threshold_ 
-    //  || std::abs(std::atan2(c.y - b.y, c.x - b.x) - CV_PI) < angle_threshold_)
-    //     return true;
+    // Check if line BC is mostly horizontal or vertical
+    if (std::abs(std::atan2(c.y - b.y, c.x - b.x)) < angle_threshold_ 
+     || std::abs(std::atan2(c.y - b.y, c.x - b.x) - CV_PI) < angle_threshold_)
+        return true;
 
-    // // Check if line CD is mostly horizontal or vertical
-    // if (std::abs(std::atan2(d.y - c.y, d.x - c.x)) < angle_threshold_ 
-    //  || std::abs(std::atan2(d.y - c.y, d.x - c.x) - CV_PI) < angle_threshold_)
-    //     return true;
+    // Check if line CD is mostly horizontal or vertical
+    if (std::abs(std::atan2(d.y - c.y, d.x - c.x)) < angle_threshold_ 
+     || std::abs(std::atan2(d.y - c.y, d.x - c.x) - CV_PI) < angle_threshold_)
+        return true;
 
-    // // Check if line DA is mostly horizontal or vertical
-    // if (std::abs(std::atan2(a.y - d.y, a.x - d.x)) < angle_threshold_ 
-    //  || std::abs(std::atan2(a.y - d.y, a.x - d.x) - CV_PI) < angle_threshold_)
-    //     return true;
+    // Check if line DA is mostly horizontal or vertical
+    if (std::abs(std::atan2(a.y - d.y, a.x - d.x)) < angle_threshold_ 
+     || std::abs(std::atan2(a.y - d.y, a.x - d.x) - CV_PI) < angle_threshold_)
+        return true;
     
     // In fo linesare mostly horizontal nor vertical, the test fails
     return true;

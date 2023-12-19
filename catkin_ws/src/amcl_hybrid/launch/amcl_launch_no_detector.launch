@@ -11,7 +11,7 @@
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find run_amcl)/test_amcl.rviz" />
 
     <!-- 3. Launch Map -->
-    <arg name="map_file" default="map_mocap.yaml" />
+    <arg name="map_file" default="hallway.yaml" />
     <arg name="map_path" default="$(find amcl_hybrid)/../../../maps/" />
     <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_path)$(arg map_file)" />
 
