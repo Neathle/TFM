@@ -10,6 +10,7 @@
 
 constexpr size_t N = 20;
 
+
 static double euclideanOfVectors(const urdf::Vector3& vec1, const urdf::Vector3& vec2)
 {
   return std::sqrt(std::pow(vec1.x - vec2.x, 2) + std::pow(vec1.y - vec2.y, 2) + std::pow(vec1.z - vec2.z, 2));
@@ -113,7 +114,7 @@ static bool getWheelRadius(const urdf::LinkConstSharedPtr& wheel_link, double& w
 class IsaacOdomPublisher
 {
 public:
-  IsaacOdomPublisher(): distribution(0.0, std::sqrt(0.001))
+  IsaacOdomPublisher(): distribution(0.0, std::sqrt(0.0001))
   {
     nh.param("left_wheel_names", left_wheel_names, std::vector<std::string>(1, "wheel_left_joint"));
     nh.param("right_wheel_names", right_wheel_names,  std::vector<std::string>(1, "wheel_right_joint"));
@@ -147,7 +148,7 @@ public:
     ros::Time time = ros::Time::now();
     last_state_publish_time_ = time;
     time_previous_ = time;
-
+    
     odometry_.init(time);
   }
 
@@ -183,7 +184,7 @@ public:
               right_pos = -M_PI - right_pos;
             }
         }
-        right_pos = unwrap(right_pos, false);
+        right_pos = unwrap(right_pos, false) + distribution(generator);
 
         // ROS_WARN_STREAM_NAMED(name_,  "old_right_pos: " << old_right_pos << ", right_pos: " << right_pos << ", yaw:" << yaw);
 
