@@ -1,17 +1,29 @@
 <?xml version="1.0"?>
 <launch>
 
+    <!-- roslaunch amcl_hybrid amcl_launch.launch 2>&1 | grep -v 'TF_REPEATED_DATA\|binarydeb' -->
+
+    <arg name="environment" default="long_gallery"/>
+    <!-- 
+    Available environments:
+        1. mocap
+        2. long_hallway
+        3. long_gallery
+    -->
+
     <!-- 0. Set simulation time to synchronize bag files and node data-->
 	<param name="/use_sim_time" type="bool" value="true"/>
 
     <!-- 1. AMCL Hybrid -->
-    <include file="$(find amcl_hybrid)/launch/amcl_hybrid.launch" />
+    <include file="$(find amcl_hybrid)/launch/amcl_hybrid.launch">
+        <arg name="marker_positions_file" value="$(find amcl_hybrid)/maps/marker_positions_$(arg environment).yml" />
+    </include>
 
     <!-- 2. Launch Rviz -->
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find run_amcl)/test_amcl.rviz" />
 
     <!-- 3. Launch Map -->
-    <arg name="map_file" default="long_hallway.yaml" />
+    <arg name="map_file" default="$(arg environment).yaml" />
     <arg name="map_path" default="$(find amcl_hybrid)/../../../maps/" />
     <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_path)$(arg map_file)" />
 

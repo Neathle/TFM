@@ -332,7 +332,7 @@ private:
 
   std::vector<geometry_msgs::Point> CalculateRelativePose(Marcador Marca, geometry_msgs::Pose CamaraMundo);
   // Prob related parameters
-  double marker_z_hit, marker_z_rand, marker_sigma_hit, marker_landa;
+  double marker_z_hit, marker_z_rand, marker_sigma_hit, marker_landa, min_error;
   message_filters::Subscriber<detector::messagedet>* marker_detection_sub_;
   tf::MessageFilter<detector::messagedet>* marker_detection_filter_;
   nav_msgs::Path reference, output;
@@ -555,6 +555,7 @@ AmclNode::AmclNode()
   private_nh_.getParam("/amcl_hybrid/marker_z_rand", marker_z_rand);
   private_nh_.getParam("/amcl_hybrid/marker_sigma_hit", marker_sigma_hit);
   private_nh_.getParam("/amcl_hybrid/marker_landa", marker_landa);
+  private_nh_.getParam("/amcl_hybrid/min_error", min_error);
   cout << "landa: " << marker_landa << endl;
   private_nh_.getParam("/amcl_hybrid/simulation", simulation);
   marker_ = new AMCLMarker(simulation);
@@ -831,7 +832,7 @@ void AmclNode::reconfigureCB(AMCLConfig& config, uint32_t level)
   if (marker_model_type_ == MARKER_MODEL_LIKELIHOOD)
   {
     ROS_INFO("Initializing marker filter EN reconfigureCB...");
-    marker_->SetModelLikelihoodField(marker_z_hit, marker_z_rand, marker_sigma_hit, marker_landa, marker_coeff);
+    marker_->SetModelLikelihoodField(marker_z_hit, marker_z_rand, marker_sigma_hit, marker_landa, marker_coeff, min_error);
     ROS_INFO("Done initializing marker filter");
     // cout<<marker_map.size()<<endl;
     marker_->map = marker_map;
@@ -1123,7 +1124,7 @@ void AmclNode::handleMapMessage(const nav_msgs::OccupancyGrid& msg)
   if (marker_model_type_ == MARKER_MODEL_LIKELIHOOD)
   {
     ROS_INFO("Initializing likelihood field model MARKER, EN handleMapMessage");
-    marker_->SetModelLikelihoodField(marker_z_hit, marker_z_rand, marker_sigma_hit, marker_landa, marker_coeff);
+    marker_->SetModelLikelihoodField(marker_z_hit, marker_z_rand, marker_sigma_hit, marker_landa, marker_coeff, min_error);
     ROS_INFO("Done initializing likelihood field model MARKER.");
     marker_->map = marker_map;
     marker_->tf_cameras = tf_cameras;
@@ -2421,11 +2422,24 @@ void AmclNode::setupCameraCallback(const sensor_msgs::CameraInfoConstPtr& cam_in
     marker_->LoadCameraInfo2(cam_info);
     setupCameraInfo = true;
     std::cout << "\nUpdated CameraInfo with cameraInfo topic" << std::endl;
-    image_width = marker_->cam_inf_ed.width;
-    image_height = marker_->cam_inf_ed.height;
-    std::cout << "#### camera info ####" << std::endl;
-    std::cout << "- Width image: " << image_width << std::endl;
-    std::cout << "- Height image: " << image_height << std::endl;
-    std::cout << "- Height camera: " << height_pos_camera_link_ << std::endl;
+    // image_width = marker_->cam_inf_ed.width;
+    // image_height = marker_->cam_inf_ed.height;
+    // std::cout << "#### camera info ####" << std::endl;
+    // std::cout << "- Width image: " << image_width << std::endl;
+    // std::cout << "- Height image: " << image_height << std::endl;
+    // std::cout << "- Height camera: " << height_pos_camera_link_ << std::endl;
+
+    //print the rest of marker_->cam_inf_ed
+    std::cout << "CameraInfo:\n";
+    std::cout << "  width: " << marker_->cam_inf_ed.width << std::endl;
+    std::cout << "  height: " << marker_->cam_inf_ed.height << std::endl;
+    std::cout << "  distortion_model: " << marker_->cam_inf_ed.distortion_model << std::endl;
+    std::cout << "  D: " << marker_->cam_inf_ed.D[0] << " " << marker_->cam_inf_ed.D[1] << " " << marker_->cam_inf_ed.D[2] << " " << marker_->cam_inf_ed.D[3] << " " << marker_->cam_inf_ed.D[4] << std::endl;
+    std::cout << "  K: " << marker_->cam_inf_ed.K[0] << " " << marker_->cam_inf_ed.K[1] << " " << marker_->cam_inf_ed.K[2] << " " << marker_->cam_inf_ed.K[3] << " " << marker_->cam_inf_ed.K[4] << " " << marker_->cam_inf_ed.K[5] << " " << marker_->cam_inf_ed.K[6] << " " << marker_->cam_inf_ed.K[7] << " " << marker_->cam_inf_ed.K[8] << std::endl;
+    std::cout << "  R: " << marker_->cam_inf_ed.R[0] << " " << marker_->cam_inf_ed.R[1] << " " << marker_->cam_inf_ed.R[2] << " " << marker_->cam_inf_ed.R[3] << " " << marker_->cam_inf_ed.R[4] << " " << marker_->cam_inf_ed.R[5] << " " << marker_->cam_inf_ed.R[6] << " " << marker_->cam_inf_ed.R[7] << " " << marker_->cam_inf_ed.R[8] << std::endl;
+    std::cout << "  P: " << marker_->cam_inf_ed.P[0] << " " << marker_->cam_inf_ed.P[1] << " " << marker_->cam_inf_ed.P[2] << " " << marker_->cam_inf_ed.P[3] << " " << marker_->cam_inf_ed.P[4] << " " << marker_->cam_inf_ed.P[5] << " " << marker_->cam_inf_ed.P[6] << " " << marker_->cam_inf_ed.P[7] << " " << marker_->cam_inf_ed.P[8] << " " << marker_->cam_inf_ed.P[9] << " " << marker_->cam_inf_ed.P[10] << " " << marker_->cam_inf_ed.P[11] << std::endl;
+    std::cout << "  binning_x: " << marker_->cam_inf_ed.binning_x << std::endl;
+    std::cout << "  binning_y: " << marker_->cam_inf_ed.binning_y << std::endl;
+
   }
 }

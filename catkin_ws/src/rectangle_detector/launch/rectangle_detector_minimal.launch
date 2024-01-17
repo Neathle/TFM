@@ -33,13 +33,13 @@
         <param name="max_num_trapezoids" value="50" /> <!-- Permissive higher -->
         <param name="elongation_factor" value="1.15" /> <!-- Permissive higher -->
         <param name="whiteness_threshold" value="0.25" /> <!-- Permissive lower -->
-        <param name="nms_threshold" value="2" /> <!-- Permissive lower -->
+        <param name="nms_threshold" value="1" /> <!-- Permissive lower -->
         <param name="lineImg_drawing_width" value="1" /> <!-- Permissive higher -->
         <param name="rects_min_area_factor" value="0.0005" /> <!-- Permissive lower -->
         <param name="rects_max_area_factor" value="0.6" /> <!-- Permissive higher -->
-        <param name="compactness_threshold" value="0.3" /> <!-- Permissive lower -->
-        <param name="length_diff_threshold" value="0.01" /> <!-- Permissive lower -->
-        <param name="angle_threshold" value="0.3" /> <!-- Permissive higher -->
+        <param name="compactness_threshold" value="0.2" /> <!-- Permissive lower -->
+        <param name="length_diff_threshold" value="0.05" /> <!-- Permissive lower -->
+        <param name="angle_threshold" value="0.6" /> <!-- Permissive higher -->
         
         <param name="draw_intersections" value="true" /> <!-- Turn off for performance -->
         <param name="draw_graph" value="true" /> <!-- Turn off for performance -->

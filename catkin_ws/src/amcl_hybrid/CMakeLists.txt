@@ -5,6 +5,10 @@ project(amcl_hybrid)
 # add_compile_options(-std=c++11)
 set (CMAKE_CXX_STANDARD 11)
 
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 find_package(catkin REQUIRED COMPONENTS
     message_filters
     rosbag

@@ -91,7 +91,7 @@ public:
   virtual ~AMCLMarker();
 
 public:
-  void SetModelLikelihoodField(double z_hit, double z_rand, double sigma_hit, double landa, double marker_coeff);
+  void SetModelLikelihoodField(double z_hit, double z_rand, double sigma_hit, double landa, double marker_coeff, float min_error);
 
   // Update the filter based on the sensor model.  Returns true if the
   // filter has been updated.
@@ -212,6 +212,9 @@ private:
   // Landa for exponential model of marker hits.
 private:
   double landa;
+
+private:
+  float min_error;
 };
 
 }  // namespace amcl

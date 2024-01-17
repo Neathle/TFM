@@ -67,7 +67,7 @@ AMCLMarker::~AMCLMarker()
 }
 
 void AMCLMarker::SetModelLikelihoodField(double z_hit, double z_rand, double sigma_hit, double landa,
-                                         double marker_coeff)
+                                         double marker_coeff, float min_error)
 {
   this->model_type = MARKER_MODEL_LIKELIHOOD;
   this->z_hit = z_hit;
@@ -75,6 +75,7 @@ void AMCLMarker::SetModelLikelihoodField(double z_hit, double z_rand, double sig
   this->sigma_hit = sigma_hit;
   this->landa = landa;
   this->marker_coeff = marker_coeff;
+  this->min_error = min_error;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +108,7 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
   total_weight = 0.0;
   float gaussian_norm = 1 / (sqrt(2 * M_PI * self->sigma_hit * self->sigma_hit));
   int valid_msg = 0;
+  
 
   amcl_hybrid::pixels_cloud aux_pixels_cloud;
   // ###### Un ciclo por cada muestra de la nube de puntos (sample)
@@ -200,9 +202,8 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
         std::cout << "Ztot: (" << pair.first << ", " << pair.second << ")" << std::endl;
     }}
 
-    float min_error = 1.0f;
     std::for_each(ztot_vector.begin(), ztot_vector.end(), [&](std::pair<size_t, float> ztot) {
-      if (ztot.second < min_error) {
+      if (ztot.second < self->min_error) {
         total_error_marker += ztot.second;
         p += std::pow(self->landa * exp(-self->landa * ztot.second), 3);
       }
@@ -302,6 +303,36 @@ double calculateDistance(cv::Point2f observation_point, cv::Point2d marker_point
     return std::sqrt(std::pow(marker_point.x - observation_point.x, 2) + std::pow(marker_point.y - observation_point.y, 2));
 }
 
+void drawPoints(const std::vector<cv::Point2d>& map, const std::vector<cv::Point2f>& observation, float value) {
+    // Create a black image
+    cv::Mat img(480, 640, CV_8UC3, cv::Scalar(0, 0, 0));
+
+    // Draw the map points in green
+    for (size_t i = 0; i < map.size(); ++i) {
+        if (i < map.size() - 1) {
+            cv::line(img, map[i], map[i + 1], cv::Scalar(0, 255, 0), 1);
+        }
+        cv::drawMarker(img, map[i], cv::Scalar(0, 255, 0), cv::MARKER_CROSS, 10, 2);
+    }
+
+    // Draw the observation points in blue
+    for (size_t i = 0; i < observation.size(); ++i) {
+        if (i < observation.size() - 1) {
+            cv::line(img, observation[i], observation[i + 1], cv::Scalar(255, 0, 0), 1);
+        }
+        cv::drawMarker(img, observation[i], cv::Scalar(255, 0, 0), cv::MARKER_CROSS, 10, 2);
+    }
+
+    // Convert float to string
+    std::ostringstream ss;
+    ss << value;
+    std::string title = "Image " + ss.str();
+
+    // Display the image
+    cv::imshow(title, img);
+    cv::waitKey(0);
+}
+
 // ##### esta función es la que calcula el error sabiendo donde esta la proyección teórica (la recibida) y la del mapa
 std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& observation,
                                                     std::vector<cv::Point2d> projected_map_marker)
@@ -312,10 +343,12 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
   // después de aplicar pin_hole
   //* Find the marker with minimum error and return that marker's id and error
   std::vector<float> observation_errors(observation.size());
-  for (size_t j = 0; j < observation.size(); j++)
+  for (size_t j = 0; j < observation.size(); j++) 
   {
     ROS_DEBUG_STREAM("PROCESSING MARKER " << j);
     std::vector<cv::Point2f> projected_observation = observation[j].getMarkerPoints();
+    std::vector<cv::Point2f> projected_observation_matched = projected_observation;
+
 
     // normalizing error with width and height of image.
     float errorv = 0;  // vector de error cálculado para cada corner
@@ -327,13 +360,14 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
       float error = 0.0;
       std::vector<float> corner_errors(projected_observation.size());
 
-      for (int j = 0; j < projected_observation.size(); j++) //corner in observation
+      for (int k = 0; k < projected_observation.size(); k++) //corner in observation
       {
-        corner_errors[j] = calculateDistance(projected_observation[j], projected_map_marker[i]);
+        corner_errors[k] = calculateDistance(projected_observation[k], projected_map_marker[i]);
       }
       //find the index of the element with minimum corner error, and remove it from projected observation
       int min_corner_error_index = std::distance(corner_errors.begin(), std::min_element(corner_errors.begin(), corner_errors.end()));
       cv::Point2f matched_corner = projected_observation[min_corner_error_index];
+      projected_observation_matched[i] = matched_corner;
       projected_observation.erase(projected_observation.begin() + min_corner_error_index);
       
 
@@ -350,6 +384,11 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
       errorx << ", " << errory << "] " << "Total: " << error << endl ;*/
     }
 
+    if (errorv < this->min_error) 
+    {
+      drawPoints(projected_map_marker, projected_observation_matched, errorv);
+    }
+
     observation_errors[j] = errorv;
   }
 
@@ -357,12 +396,31 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
       std::distance(observation_errors.begin(), std::min_element(observation_errors.begin(), observation_errors.end()));
 
   float min_error = observation_errors[min_error_index];
-  // if (min_error > 1) //TODO: set this threshold to a reasonable value, curretly it is not filtering
-  // {
-  //   ROS_WARN_STREAM("Failed to detect Marker -> error is higher than 1: " << min_error ); 
-  // }
+  if (min_error < this->min_error) //TODO: set this threshold to a reasonable value, curretly it is not filtering
+  {
+    ROS_WARN_STREAM("Sucessfully detected Marker -> error: " << min_error ); 
+  }
   return std::make_pair(min_error_index, min_error);  // retornamos el id y error minimo
 }
+
+
+void drawPointsP(const std::vector<cv::Point2d>& map) {
+    // Create a black image
+    cv::Mat img(480, 640, CV_8UC3, cv::Scalar(0, 0, 0));
+
+    // Draw the map points in green
+    for (size_t i = 0; i < map.size(); ++i) {
+        if (i < map.size() - 1) {
+            cv::line(img, map[i], map[i + 1], cv::Scalar(0, 255, 0), 1);
+        }
+        cv::drawMarker(img, map[i], cv::Scalar(0, 255, 0), cv::MARKER_CROSS, 10, 2);
+    }
+
+    // Display the image
+    cv::imshow("Projection", img);
+    cv::waitKey(0);
+}
+
 
 // Entra una vez por cada marker encontrado
 std::vector<cv::Point2d> AMCLMarker::projectPoints(std::vector<geometry_msgs::Point> cam_center_coord)
@@ -396,6 +454,8 @@ std::vector<cv::Point2d> AMCLMarker::projectPoints(std::vector<geometry_msgs::Po
     Pixels.push_back(Pixel);
     aux_pixels_corners.pixels_corners.push_back(pixel_corner);
   }
+
+  drawPointsP(Pixels);
   // cout<<"sale"<<endl;
   this->send_pixels_corners = aux_pixels_corners;
   return Pixels;

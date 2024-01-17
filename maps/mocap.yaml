@@ -1,4 +1,4 @@
-image: map_mocap.pgm
+image: mocap.pgm
 resolution: 0.050000
 origin: [-6.807226, -4.166632, 0.000000]
 negate: 0
