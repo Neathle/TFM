@@ -42,8 +42,8 @@
         <param name="transform_tolerance" value="0.2" />
         <param name="gui_publish_rate" value="10.0"/>
         <param name="laser_max_beams" value="30"/>
-        <param name="min_particles" value="5"/>
-        <param name="max_particles" value="10"/>
+        <param name="min_particles" value="500"/>
+        <param name="max_particles" value="1000"/>
         <param name="kld_err" value="0.05"/>
         <param name="kld_z" value="0.99"/>
         <param name="odom_alpha1" value="0.005"/>
@@ -80,7 +80,7 @@
         <param name="NUM_CAM" value ="1" /> <!-- Only work with 1 camera, do not change it-->
         <param name = "marker_model_type" value="observation_likelihood"/>
 
-        <param name="min_error" value="0.2"/>
+        <param name="min_error" value="0.1"/>
         <param name="use_map_topic" value="true"/>
         <param name="marker_z_hit" value="0.995"/>
         <param name="marker_z_rand" value ="0.005"/>

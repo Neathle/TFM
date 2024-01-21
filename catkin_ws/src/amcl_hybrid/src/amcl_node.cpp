@@ -2421,23 +2421,18 @@ void AmclNode::setupCameraCallback(const sensor_msgs::CameraInfoConstPtr& cam_in
   {  // solo entra una vez
     marker_->LoadCameraInfo2(cam_info);
     setupCameraInfo = true;
-    std::cout << "\nUpdated CameraInfo with cameraInfo topic" << std::endl;
-    // image_width = marker_->cam_inf_ed.width;
-    // image_height = marker_->cam_inf_ed.height;
-    // std::cout << "#### camera info ####" << std::endl;
-    // std::cout << "- Width image: " << image_width << std::endl;
-    // std::cout << "- Height image: " << image_height << std::endl;
-    // std::cout << "- Height camera: " << height_pos_camera_link_ << std::endl;
 
-    //print the rest of marker_->cam_inf_ed
-    std::cout << "CameraInfo:\n";
+    image_width = marker_->cam_inf_ed.width;
+    image_height = marker_->cam_inf_ed.height;
+
+    std::cout << "#### CameraInfo: ####\n";
     std::cout << "  width: " << marker_->cam_inf_ed.width << std::endl;
     std::cout << "  height: " << marker_->cam_inf_ed.height << std::endl;
     std::cout << "  distortion_model: " << marker_->cam_inf_ed.distortion_model << std::endl;
-    std::cout << "  D: " << marker_->cam_inf_ed.D[0] << " " << marker_->cam_inf_ed.D[1] << " " << marker_->cam_inf_ed.D[2] << " " << marker_->cam_inf_ed.D[3] << " " << marker_->cam_inf_ed.D[4] << std::endl;
-    std::cout << "  K: " << marker_->cam_inf_ed.K[0] << " " << marker_->cam_inf_ed.K[1] << " " << marker_->cam_inf_ed.K[2] << " " << marker_->cam_inf_ed.K[3] << " " << marker_->cam_inf_ed.K[4] << " " << marker_->cam_inf_ed.K[5] << " " << marker_->cam_inf_ed.K[6] << " " << marker_->cam_inf_ed.K[7] << " " << marker_->cam_inf_ed.K[8] << std::endl;
-    std::cout << "  R: " << marker_->cam_inf_ed.R[0] << " " << marker_->cam_inf_ed.R[1] << " " << marker_->cam_inf_ed.R[2] << " " << marker_->cam_inf_ed.R[3] << " " << marker_->cam_inf_ed.R[4] << " " << marker_->cam_inf_ed.R[5] << " " << marker_->cam_inf_ed.R[6] << " " << marker_->cam_inf_ed.R[7] << " " << marker_->cam_inf_ed.R[8] << std::endl;
-    std::cout << "  P: " << marker_->cam_inf_ed.P[0] << " " << marker_->cam_inf_ed.P[1] << " " << marker_->cam_inf_ed.P[2] << " " << marker_->cam_inf_ed.P[3] << " " << marker_->cam_inf_ed.P[4] << " " << marker_->cam_inf_ed.P[5] << " " << marker_->cam_inf_ed.P[6] << " " << marker_->cam_inf_ed.P[7] << " " << marker_->cam_inf_ed.P[8] << " " << marker_->cam_inf_ed.P[9] << " " << marker_->cam_inf_ed.P[10] << " " << marker_->cam_inf_ed.P[11] << std::endl;
+    std::cout << "  D: " << "[] \n";
+    std::cout << "  K: [" << marker_->cam_inf_ed.K[0] << " " << marker_->cam_inf_ed.K[1] << " " << marker_->cam_inf_ed.K[2] << " " << marker_->cam_inf_ed.K[3] << " " << marker_->cam_inf_ed.K[4] << " " << marker_->cam_inf_ed.K[5] << " " << marker_->cam_inf_ed.K[6] << " " << marker_->cam_inf_ed.K[7] << " " << marker_->cam_inf_ed.K[8] << " ]\n";
+    std::cout << "  R: [" << marker_->cam_inf_ed.R[0] << " " << marker_->cam_inf_ed.R[1] << " " << marker_->cam_inf_ed.R[2] << " " << marker_->cam_inf_ed.R[3] << " " << marker_->cam_inf_ed.R[4] << " " << marker_->cam_inf_ed.R[5] << " " << marker_->cam_inf_ed.R[6] << " " << marker_->cam_inf_ed.R[7] << " " << marker_->cam_inf_ed.R[8] << " ]\n";
+    std::cout << "  P: [" << marker_->cam_inf_ed.P[0] << " " << marker_->cam_inf_ed.P[1] << " " << marker_->cam_inf_ed.P[2] << " " << marker_->cam_inf_ed.P[3] << " " << marker_->cam_inf_ed.P[4] << " " << marker_->cam_inf_ed.P[5] << " " << marker_->cam_inf_ed.P[6] << " " << marker_->cam_inf_ed.P[7] << " " << marker_->cam_inf_ed.P[8] << " " << marker_->cam_inf_ed.P[9] << " " << marker_->cam_inf_ed.P[10] << " " << marker_->cam_inf_ed.P[11] << " ]\n";
     std::cout << "  binning_x: " << marker_->cam_inf_ed.binning_x << std::endl;
     std::cout << "  binning_y: " << marker_->cam_inf_ed.binning_y << std::endl;
 
