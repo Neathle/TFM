@@ -30,7 +30,7 @@
                     - angle: Chechs that the angles of the trapezoid are close to 90º, also check that at least one of the sides is horizontal
                              or vertical.
         -->
-        <param name="max_num_trapezoids" value="50" /> <!-- Permissive higher -->
+        <param name="max_num_trapezoids" value="100" /> <!-- Permissive higher -->
         <param name="elongation_factor" value="1.15" /> <!-- Permissive higher -->
         <param name="whiteness_threshold" value="0.25" /> <!-- Permissive lower -->
         <param name="nms_threshold" value="1" /> <!-- Permissive lower -->

@@ -14,11 +14,6 @@
     <!-- 0. Set simulation time to synchronize bag files and node data-->
 	<param name="/use_sim_time" type="bool" value="true"/>
 
-    <!-- 1. AMCL Hybrid -->
-    <include file="$(find amcl_hybrid)/launch/amcl_hybrid.launch">
-        <arg name="marker_positions_file" value="$(find amcl_hybrid)/maps/marker_positions_$(arg environment).yml" />
-    </include>
-
     <!-- 2. Launch Rviz -->
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find run_amcl)/test_amcl.rviz" />
 
@@ -33,11 +28,8 @@
     <rosparam file="$(find amcl_hybrid)/cfg/odom_params.yaml" command="load" />
     <node pkg="amcl_hybrid" type="isaac_odom_publisher" name="isaac_odom_publisher" output="screen"/>
 
-    <!-- 5. Rectangle Detector Node-->
-    <include file="$(find rectangle_detector)/launch/rectangle_detector_minimal.launch">
-        
-    </include>
-
-    <node name="record" pkg="rosbag" type="record" args="-O /home/neathle/TFM/rosbags/latest.bag /amcl_pose /odom /odom_gt" />
+    <!-- 5. Record Rosbag -->
+    <!-- <node name="record" pkg="rosbag" type="record" args="-O /home/neathle/TFM/rosbags/latest.bag /rgb /amcl_hybrid/camera_info /odom /scan /tf /tf_static /clock /map" /> -->
+    <node name="record" pkg="rosbag" type="record" args="-O /home/neathle/TFM/rosbags/latest.bag /cmd_vel" />
 
 </launch>

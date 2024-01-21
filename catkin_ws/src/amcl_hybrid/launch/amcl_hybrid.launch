@@ -97,7 +97,7 @@
 
         <!--for FUSION laser-camera-->
         <param name="laser_coeff" value="1.0"/>
-        <param name="camera_coeff" value="1.0"/>
+        <param name="camera_coeff" value="0.0"/>
 
         <!-- simulation or real (Only work with value 1 = simulation, do not change it) -->
         <param name="simulation" value = "1"/>
