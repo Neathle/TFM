@@ -51,7 +51,7 @@ qtcreator-*
 CATKIN_IGNORE
 /catkin_ws/.catkin_tools
 /catkin_ws/src/slam_toolbox
-/catkin_ws/src/slam_toolbox/
+ 
 
 # VSCode
 /.vscode/
@@ -60,3 +60,5 @@ simulation/tiago_robot
 catkin_ws/src/slam_toolbox
 
 *.tar
+catkin_ws/src/slam_toolbox
+simulation/tiago_robot

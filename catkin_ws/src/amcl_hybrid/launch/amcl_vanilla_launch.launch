@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <launch>
 
-    <!-- roslaunch amcl_hybrid amcl_launch.launch 2>&1 | grep -v 'TF_REPEATED_DATA\|binarydeb' -->
+    <!-- roslaunch amcl_hybrid amcl_vanilla_launch.launch 2>&1 | grep -v 'TF_REPEATED_DATA\|binarydeb' -->
+    <!-- rosbag play ../rosbags/hallway_2024-02-09-17-50-04.bag /xtion/rgb/image_rect_color:=/rgb /xtion/rgb/camera_info:=/amcl_hybrid/camera_info -->
 
-    <arg name="environment" default="mocap"/>
+    <arg name="environment" default="car"/>
     <!-- 
     Available environments:
         1. mocap
