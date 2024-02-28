@@ -62,3 +62,4 @@ catkin_ws/src/slam_toolbox
 *.tar
 catkin_ws/src/slam_toolbox
 simulation/tiago_robot
+simulation/.thumbs/*
