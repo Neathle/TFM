@@ -10,7 +10,7 @@
     <arg name="markers_file_name" default="markers_map_$(arg scenario)_$(arg thresh)_m$(arg num_markers)"/>
     <arg name="marker_positions_file" default="$(find amcl_hybrid)/maps/$(arg markers_file_name).yml" /> -->
 
-    <arg name="marker_positions_file" default="$(find amcl_hybrid)/maps/marker_positions_long_hallway.yml"/>
+    <arg name="marker_positions_file" default="$(find amcl_hybrid)/maps/marker_positions_car.yml"/>
 
     <arg name="cameras_file_name" default="cameras"/>
     <arg name="cameras_positions_file" default="$(find amcl_hybrid)/maps/$(arg cameras_file_name).yaml" />
@@ -50,7 +50,7 @@
         <param name="odom_alpha2" value="0.005"/>
         <!-- translation std dev, m -->
         <remap from="scan" to="$(arg scan_topic)"/>
-        <param name="odom_alpha3" value="0.3"/>
+        <param name="odom_alpha3" value="0.005"/>
         <param name="odom_alpha4" value="0.005"/>
         <param name="laser_z_hit" value="0.95"/>
         <param name="laser_z_short" value="0.05"/>
@@ -97,7 +97,7 @@
 
         <!--for FUSION laser-camera-->
         <param name="laser_coeff" value="1.0"/>
-        <param name="camera_coeff" value="0.0"/>
+        <param name="camera_coeff" value="1.0"/>
 
         <!-- simulation or real (Only work with value 1 = simulation, do not change it) -->
         <param name="simulation" value = "1"/>

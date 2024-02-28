@@ -34,7 +34,7 @@
     <node pkg="amcl_hybrid" type="isaac_odom_publisher" name="isaac_odom_publisher" output="screen"/>
 
     <!-- 5. Rectangle Detector Node-->
-    <include file="$(find rectangle_detector)/launch/rectangle_detector_minimal.launch">
+    <include file="$(find rectangle_detector)/launch/rectangle_detector_sim.launch">
         
     </include>
 

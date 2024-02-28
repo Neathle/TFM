@@ -71,6 +71,20 @@ void RectangleDetectorNode::imageCallbackIntersections(const sensor_msgs::ImageC
         ROS_ERROR("cv_bridge exception: %s", e.what());
     }
 
+    //initialize FLD using OTSU's method
+    cv::Mat gray_for_otsu = gray.clone();
+    cv::threshold(gray_for_otsu, gray_for_otsu, 0, 255, cv::THRESH_BINARY_INV + cv::THRESH_OTSU);
+    double otsu_high_threshold = cv::threshold(gray_for_otsu, gray_for_otsu, 0, 255, cv::THRESH_BINARY);
+
+    fld = cv::ximgproc::createFastLineDetector(
+        15, //length_threshold
+        1.41421356f, //distance_threshold
+        0.33333333*otsu_high_threshold, //canny_th1
+        otsu_high_threshold, //canny_th2
+        3, //canny_aperture_size
+        true //do_merge
+    );
+
     extractLines();
     findIntersections();
 
@@ -103,11 +117,26 @@ void RectangleDetectorNode::imageCallbackTrapezoids(const sensor_msgs::ImageCons
     {
         ROS_ERROR("cv_bridge exception: %s", e.what());
     }
+
+    
+    //initialize FLD using OTSU's method
+    cv::Mat gray_for_otsu = gray.clone();
+    double otsu_high_threshold = cv::threshold(gray_for_otsu, gray_for_otsu, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+
+    fld = cv::ximgproc::createFastLineDetector(
+        15, //length_threshold
+        1.41421356f, //distance_threshold
+        0.33333333*otsu_high_threshold, //canny_th1
+        otsu_high_threshold, //canny_th2
+        3, //canny_aperture_size
+        true //do_merge
+    );
     
     extractLines();
     findIntersections();
     createGraph();
     extractTrapezoids();
+    if (draw_trapezoids_) drawTrapezoids();
     publishDetections();
 
     //publish images
@@ -240,44 +269,44 @@ float cross(cv::Point2i a, cv::Point2i b)
 // Function to check if the angles of a trapezoid are sufficiently close to 90 degrees
 bool RectangleDetectorNode::trapezoidAnglesTest(cv::Point2i a, cv::Point2i b, cv::Point2i c, cv::Point2i d) 
 {
-    // atan2(vectorA.y, vectorA.x) - atan2(vectorB.y,  vectorB.x)
-    float angle1 = std::atan2(b.y - a.y, b.x - a.x) - std::atan2(c.y - b.y, c.x - b.x);
-    if (angle1 < 0) angle1 += 2 * CV_PI;
-    angle1 = std::abs(angle1);
-    // if angle is not between pi/2-angle_threshold_ and pi/2+angle_threshold_ then return false
-    if (angle1 < CV_PI / 2 - angle_threshold_ || angle1 > CV_PI / 2 + angle_threshold_) return false;
+    // // atan2(vectorA.y, vectorA.x) - atan2(vectorB.y,  vectorB.x)
+    // float angle1 = std::atan2(b.y - a.y, b.x - a.x) - std::atan2(c.y - b.y, c.x - b.x);
+    // if (angle1 < 0) angle1 += 2 * CV_PI;
+    // angle1 = std::abs(angle1);
+    // // if angle is not between pi/2-angle_threshold_ and pi/2+angle_threshold_ then return false
+    // if (angle1 < CV_PI / 2 - angle_threshold_ || angle1 > CV_PI / 2 + angle_threshold_) return false;
 
-    float angle2 = std::atan2(c.y - b.y, c.x - b.x) - std::atan2(d.y - c.y, d.x - c.x);
-    if (angle2 < 0) angle2 += 2 * CV_PI;
-    angle2 = std::abs(angle2);
-    if (angle2 < CV_PI / 2 - angle_threshold_ || angle2 > CV_PI / 2 + angle_threshold_) return false;
+    // float angle2 = std::atan2(c.y - b.y, c.x - b.x) - std::atan2(d.y - c.y, d.x - c.x);
+    // if (angle2 < 0) angle2 += 2 * CV_PI;
+    // angle2 = std::abs(angle2);
+    // if (angle2 < CV_PI / 2 - angle_threshold_ || angle2 > CV_PI / 2 + angle_threshold_) return false;
 
-    float angle3 = std::atan2(d.y - c.y, d.x - c.x) - std::atan2(a.y - d.y, a.x - d.x);
-    if (angle3 < 0) angle3 += 2 * CV_PI;
-    angle3 = std::abs(angle3);
-    if (angle3 < CV_PI / 2 - angle_threshold_ || angle3 > CV_PI / 2 + angle_threshold_) return false;
+    // float angle3 = std::atan2(d.y - c.y, d.x - c.x) - std::atan2(a.y - d.y, a.x - d.x);
+    // if (angle3 < 0) angle3 += 2 * CV_PI;
+    // angle3 = std::abs(angle3);
+    // if (angle3 < CV_PI / 2 - angle_threshold_ || angle3 > CV_PI / 2 + angle_threshold_) return false;
     
-    // ROS_INFO("Rectangle angles %f %f %f", angle1, angle2, angle3);
+    // // ROS_INFO("Rectangle angles %f %f %f", angle1, angle2, angle3);
 
-    // Check if line AB is mostly horizontal or vertical
-    if (std::abs(std::atan2(b.y - a.y, b.x - a.x)) < angle_threshold_ 
-     || std::abs(std::atan2(b.y - a.y, b.x - a.x) - CV_PI) < angle_threshold_)
-        return true;
+    // // Check if line AB is mostly horizontal or vertical
+    // if (std::abs(std::atan2(b.y - a.y, b.x - a.x)) < angle_threshold_ 
+    //  || std::abs(std::atan2(b.y - a.y, b.x - a.x) - CV_PI) < angle_threshold_)
+    //     return true;
 
-    // Check if line BC is mostly horizontal or vertical
-    if (std::abs(std::atan2(c.y - b.y, c.x - b.x)) < angle_threshold_ 
-     || std::abs(std::atan2(c.y - b.y, c.x - b.x) - CV_PI) < angle_threshold_)
-        return true;
+    // // Check if line BC is mostly horizontal or vertical
+    // if (std::abs(std::atan2(c.y - b.y, c.x - b.x)) < angle_threshold_ 
+    //  || std::abs(std::atan2(c.y - b.y, c.x - b.x) - CV_PI) < angle_threshold_)
+    //     return true;
 
-    // Check if line CD is mostly horizontal or vertical
-    if (std::abs(std::atan2(d.y - c.y, d.x - c.x)) < angle_threshold_ 
-     || std::abs(std::atan2(d.y - c.y, d.x - c.x) - CV_PI) < angle_threshold_)
-        return true;
+    // // Check if line CD is mostly horizontal or vertical
+    // if (std::abs(std::atan2(d.y - c.y, d.x - c.x)) < angle_threshold_ 
+    //  || std::abs(std::atan2(d.y - c.y, d.x - c.x) - CV_PI) < angle_threshold_)
+    //     return true;
 
-    // Check if line DA is mostly horizontal or vertical
-    if (std::abs(std::atan2(a.y - d.y, a.x - d.x)) < angle_threshold_ 
-     || std::abs(std::atan2(a.y - d.y, a.x - d.x) - CV_PI) < angle_threshold_)
-        return true;
+    // // Check if line DA is mostly horizontal or vertical
+    // if (std::abs(std::atan2(a.y - d.y, a.x - d.x)) < angle_threshold_ 
+    //  || std::abs(std::atan2(a.y - d.y, a.x - d.x) - CV_PI) < angle_threshold_)
+    //     return true;
     
     // In fo linesare mostly horizontal nor vertical, the test fails
     return true;
@@ -354,16 +383,26 @@ void RectangleDetectorNode::drawGraph()
 // Function to draw the trapezoids
 void RectangleDetectorNode::drawTrapezoids()
 {   
-    reduceSaturationBrightness(0.5f, 0.5f);
+    // reduceSaturationBrightness(0.5f, 0.5f);
     cv::Scalar color;
     for (const auto &trapezoid : trapezoids)
     {
-        color = cv::Scalar(rng_.uniform(0, 255), rng_.uniform(0, 255), rng_.uniform(0, 255));
+        // color = cv::Scalar(rng_.uniform(0, 255), rng_.uniform(0, 255), rng_.uniform(0, 255));
+        color = cv::Scalar(255,255,255);
         cv::line(image, cv::Point(trapezoid[0], trapezoid[1]), cv::Point(trapezoid[2], trapezoid[3]), color, rectImg_drawing_width_, cv::LINE_AA);
         cv::line(image, cv::Point(trapezoid[2], trapezoid[3]), cv::Point(trapezoid[4], trapezoid[5]), color, rectImg_drawing_width_, cv::LINE_AA);
         cv::line(image, cv::Point(trapezoid[4], trapezoid[5]), cv::Point(trapezoid[6], trapezoid[7]), color, rectImg_drawing_width_, cv::LINE_AA);
         cv::line(image, cv::Point(trapezoid[6], trapezoid[7]), cv::Point(trapezoid[0], trapezoid[1]), color, rectImg_drawing_width_, cv::LINE_AA);
     }
+}
+
+// Function to draw the trapezoids
+void RectangleDetectorNode::drawTrapezoid(cv::Vec8i trapezoid, cv::Scalar color)
+{   
+    cv::line(image, cv::Point(trapezoid[0], trapezoid[1]), cv::Point(trapezoid[2], trapezoid[3]), color, rectImg_drawing_width_, cv::LINE_AA);
+    cv::line(image, cv::Point(trapezoid[2], trapezoid[3]), cv::Point(trapezoid[4], trapezoid[5]), color, rectImg_drawing_width_, cv::LINE_AA);
+    cv::line(image, cv::Point(trapezoid[4], trapezoid[5]), cv::Point(trapezoid[6], trapezoid[7]), color, rectImg_drawing_width_, cv::LINE_AA);
+    cv::line(image, cv::Point(trapezoid[6], trapezoid[7]), cv::Point(trapezoid[0], trapezoid[1]), color, rectImg_drawing_width_, cv::LINE_AA);
 }
 
 
@@ -442,6 +481,8 @@ void RectangleDetectorNode::createGraph()
 void RectangleDetectorNode::extractTrapezoids()
 {
     trapezoids.clear();
+    reduceSaturationBrightness(0.5f, 0.5f);
+
     int min_area = rects_min_area_factor_ * image.cols * image.rows;
     int max_area = rects_max_area_factor_ * image.cols * image.rows;
 
@@ -455,24 +496,43 @@ void RectangleDetectorNode::extractTrapezoids()
                 for (int l = j + 1; l < intersections.size(); ++l) {
                     if (!adjacencyMatrix_[k][l] || !adjacencyMatrix_[i][l]) continue;
                     
-                    if (!trapezoidLineTest(intersections[i], intersections[j], intersections[k], intersections[l])) continue;
-                    if (!trapezoidAreaTest(intersections[i], intersections[j], intersections[k], intersections[l], min_area, max_area)) continue;
-                    if (!trapezoidAnglesTest(intersections[i], intersections[j], intersections[k], intersections[l])) continue;
-                    if (!cv::isContourConvex(std::vector<cv::Point2i>{intersections[i], intersections[j], intersections[k], intersections[l]})) continue;
+                    if (!trapezoidLineTest(intersections[i], intersections[j], intersections[k], intersections[l])){
+                        drawTrapezoid(cv::Vec8i(intersections[i].x, intersections[i].y,
+                                                    intersections[j].x, intersections[j].y,
+                                                    intersections[k].x, intersections[k].y,
+                                                    intersections[l].x, intersections[l].y), cv::Scalar(0,0,128));
+                        continue;
+                    }
+                    if (!trapezoidAreaTest(intersections[i], intersections[j], intersections[k], intersections[l], min_area, max_area)){
+                        drawTrapezoid(cv::Vec8i(intersections[i].x, intersections[i].y,
+                                                    intersections[j].x, intersections[j].y,
+                                                    intersections[k].x, intersections[k].y,
+                                                    intersections[l].x, intersections[l].y), cv::Scalar(128,0,0));
+                        continue;
+                    }
+                    if (!trapezoidAnglesTest(intersections[i], intersections[j], intersections[k], intersections[l])){
+                        drawTrapezoid(cv::Vec8i(intersections[i].x, intersections[i].y,
+                                                    intersections[j].x, intersections[j].y,
+                                                    intersections[k].x, intersections[k].y,
+                                                    intersections[l].x, intersections[l].y), cv::Scalar(0,128,0));
+                        continue;
+                    }
+                    if (!cv::isContourConvex(std::vector<cv::Point2i>{intersections[i], intersections[j], intersections[k], intersections[l]})){
+                        drawTrapezoid(cv::Vec8i(intersections[i].x, intersections[i].y,
+                                                    intersections[j].x, intersections[j].y,
+                                                    intersections[k].x, intersections[k].y,
+                                                    intersections[l].x, intersections[l].y), cv::Scalar(128,128,0));
+                        continue;
+                    }
                     trapezoids.emplace_back(cv::Vec8i(intersections[i].x, intersections[i].y,
                                                     intersections[j].x, intersections[j].y,
                                                     intersections[k].x, intersections[k].y,
                                                     intersections[l].x, intersections[l].y));
-                    if(trapezoids.size() >= max_num_trapezoids_) goto endloop;
+                    if(trapezoids.size() >= max_num_trapezoids_) return;
                 }
             }
         }
     }
-    endloop:
-    if (draw_trapezoids_)
-        drawTrapezoids();
-    
-    // ROS_INFO("Found %lu trapezoids", trapezoids.size());
 }
 
 void RectangleDetectorNode::publishDetections()

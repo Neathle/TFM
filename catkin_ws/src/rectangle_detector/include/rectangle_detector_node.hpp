@@ -41,14 +41,7 @@ private:
     double execution_period_ = 0.1;
 
     cv::RNG rng_ = cv::RNG(0xFFFFFFFF);
-    cv::Ptr<cv::ximgproc::FastLineDetector> fld = cv::ximgproc::createFastLineDetector(
-        8, //length_threshold
-        1.41421356f, //distance_threshold
-        50, //canny_th1
-        150, //canny_th2
-        3, //canny_aperture_size
-        false //do_merge
-    );
+    cv::Ptr<cv::ximgproc::FastLineDetector> fld;
     std::vector<std::vector<bool>> adjacencyMatrix_;
 
     void imageCallbackTrapezoids(const sensor_msgs::ImageConstPtr& msg);
@@ -65,6 +58,7 @@ private:
     void reduceSaturationBrightness(float saturationScale, float valueScale);
 
     void drawGraph();
+    void drawTrapezoid(cv::Vec8i trapezoid, cv::Scalar color);
     void drawTrapezoids();
 
     void extractLines();

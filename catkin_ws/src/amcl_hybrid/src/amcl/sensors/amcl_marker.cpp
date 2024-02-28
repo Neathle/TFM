@@ -407,7 +407,7 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
 
     // if (errorv < this->min_error)
     // {
-    //   drawPoints(projected_map_marker, projected_observation_matched, errorv);
+    drawPoints(projected_map_marker, projected_observation_matched, errorv);
     // }
     observation_errors[j] = errorv;
   }

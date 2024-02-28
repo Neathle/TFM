@@ -11,6 +11,7 @@ Panels:
         - /TF1/Frames1
         - /Odometry1/Shape1
         - /Odometry2/Shape1
+        - /Image2
       Splitter Ratio: 0.5
     Tree Height: 852
   - Class: rviz/Selection
