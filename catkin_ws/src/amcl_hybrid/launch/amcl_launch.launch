@@ -38,6 +38,6 @@
         
     </include>
 
-    <node name="record" pkg="rosbag" type="record" args="-O /home/neathle/TFM/rosbags/latest.bag /amcl_pose /odom /odom_gt" />
+    <!-- <node name="record" pkg="rosbag" type="record" args="-O /home/neathle/TFM/rosbags/latest.bag /amcl_pose /odom /odom_gt" /> -->
 
 </launch>

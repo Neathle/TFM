@@ -17,7 +17,7 @@
 
     <!-- 1. AMCL Hybrid -->
     <include file="$(find amcl_hybrid)/launch/amcl_hybrid.launch">
-        <arg name="marker_positions_file" value="$(find amcl_hybrid)/maps/marker_positions_car.yml" />
+        <arg name="marker_positions_file" value="$(find amcl_hybrid)/maps/marker_positions_$(arg environment).yml" />
     </include>
 
     <!-- 2. Launch Rviz -->
@@ -42,7 +42,7 @@
         <remap from="/xtion/rgb/camera_info" to="/amcl_hybrid/camera_info"/>
     </node>
     <!-- Rosbag -->
-    <node name="record" pkg="rosbag" type="record" args="-o $(find amcl_hybrid)/../../../rosbags/test_hybrid.bag /odom /odom_gt /amcl_pose">
+    <node name="record" pkg="rosbag" type="record" args="-o $(find amcl_hybrid)/../../../rosbags/test_hybrid.bag /odom /odom_gt /amcl_pose /rectangle_detector/num_detections">
     </node>
 
 </launch>

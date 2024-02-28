@@ -844,6 +844,7 @@ void AmclNode::reconfigureCB(AMCLConfig& config, uint32_t level)
     marker_->height_center_camera = height_pos_camera_link_;
     marker_->pub_coeff_marker = nh_.advertise<amcl_hybrid::coeff_sensor>("coeff_sensor", 10);
     marker_->pub_marker_error = nh_.advertise<amcl_hybrid::marker_error>("error_marker", 10);
+    marker_->det_match_pub = nh_.advertise<sensor_msgs::Image>("detections_match", 2, true);
   }
 
   delete marker_detection_filter_;
@@ -1135,6 +1136,8 @@ void AmclNode::handleMapMessage(const nav_msgs::OccupancyGrid& msg)
     marker_->height_center_camera = height_pos_camera_link_;
     marker_->pub_coeff_marker = nh_.advertise<amcl_hybrid::coeff_sensor>("coeff_sensor", 10);
     marker_->pub_marker_error = nh_.advertise<amcl_hybrid::marker_error>("error_marker", 10);
+    marker_->det_match_pub = nh_.advertise<sensor_msgs::Image>("detections_match", 2, true);
+
   }
   // In case the initial pose message arrived before the first map,
   // try to apply the initial pose now that the map has arrived.
@@ -2031,6 +2034,7 @@ void AmclNode::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 // Include all functions in callback
 void AmclNode::detectionCallback(const detector::messagedet::ConstPtr& msg)
 {
+
   if (map_ == NULL || !setupCameraInfo || marker_coeff == 0.0)
   {  // si el mapa está vacío o no se ha recibo todavía la info de la cámara, se sale
     return;
@@ -2075,6 +2079,8 @@ void AmclNode::detectionCallback(const detector::messagedet::ConstPtr& msg)
     marker_->height_center_camera = height_pos_camera_link_;
     marker_->pub_coeff_marker = nh_.advertise<amcl_hybrid::coeff_sensor>("coeff_sensor", 10);
     marker_->pub_marker_error = nh_.advertise<amcl_hybrid::marker_error>("error_marker", 10);
+    marker_->det_match_pub = nh_.advertise<sensor_msgs::Image>("detections_match", 2, true);
+
   }
   pf_vector_t pose;
 
@@ -2162,6 +2168,8 @@ void AmclNode::detectionCallback(const detector::messagedet::ConstPtr& msg)
     marker_->height_center_camera = height_pos_camera_link_;
     marker_->pub_coeff_marker = nh_.advertise<amcl_hybrid::coeff_sensor>("coeff_sensor", 10);
     marker_->pub_marker_error = nh_.advertise<amcl_hybrid::marker_error>("error_marker", 10);
+    marker_->det_match_pub = nh_.advertise<sensor_msgs::Image>("detections_match", 2, true);
+
     // cout<<"cuantos"<<observation.size()<<endl;
     // cout<<global_frame_id_<<endl;
     // cout<<odom_frame_id_<<endl;

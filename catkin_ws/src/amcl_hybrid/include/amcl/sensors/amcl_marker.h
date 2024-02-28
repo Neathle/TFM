@@ -125,7 +125,8 @@ private:
 
 private:
   std::pair<size_t, float>  calculateError(std::vector<Marcador>& observation,
-                                    std::vector<cv::Point2d> map_marker);
+                                    std::vector<cv::Point2d> map_marker,
+                                    AMCLMarker* self);
 
 public:
   marker_model_t model_type;
@@ -147,6 +148,7 @@ public:
   // Pub_Fail_Marker
 public:
   ros::Publisher pub_coeff_marker, pub_marker_error;
+  ros:: Publisher det_match_pub;
 
   // The marker map
 public:

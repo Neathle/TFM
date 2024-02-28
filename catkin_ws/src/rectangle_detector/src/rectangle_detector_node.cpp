@@ -62,7 +62,7 @@ void RectangleDetectorNode::imageCallbackIntersections(const sensor_msgs::ImageC
         cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
         linesImg = cv::Mat::zeros(gray.size(), CV_8UC1);
 
-        image_stamp_ = ros::Time::now();
+        image_stamp_ = msg->header.stamp;
 
         // ROS_INFO("Received Image");
     }
@@ -109,7 +109,7 @@ void RectangleDetectorNode::imageCallbackTrapezoids(const sensor_msgs::ImageCons
         linesImg = cv::Mat::zeros(gray.size(), CV_8UC1);
         graphImg = cv::Mat::zeros(gray.size(), CV_8UC3);
 
-        image_stamp_ = ros::Time::now();
+        image_stamp_ = msg->header.stamp;
 
         // ROS_INFO("Received Image");
     }

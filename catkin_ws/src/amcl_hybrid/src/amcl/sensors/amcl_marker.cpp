@@ -202,7 +202,7 @@ double AMCLMarker::ObservationLikelihood(AMCLMarkerData* data, pf_sample_set_t* 
     std::vector<std::pair<size_t, float>> ztot_vector(filtered_marker_indices.size());
     std::transform(projected_markers.begin(), projected_markers.end(), ztot_vector.begin(),
                    [&self, &observation](std::vector<cv::Point2d> projected_marker) {
-                     return self->calculateError(observation, projected_marker);  // TODO: Verify adapt the function
+                     return self->calculateError(observation, projected_marker, self);  // TODO: Verify adapt the function
                    });
 
     if (print_steps)
@@ -317,7 +317,7 @@ double calculateDistance(cv::Point2f observation_point, cv::Point2d marker_point
                    std::pow(marker_point.y - observation_point.y, 2));
 }
 
-void drawPoints(const std::vector<cv::Point2d>& map, const std::vector<cv::Point2f>& observation, float value)
+void drawPoints(const std::vector<cv::Point2d>& map, const std::vector<cv::Point2f>& observation, float value, AMCLMarker* self)
 {
   // Create a black image
   cv::Mat img(480, 640, CV_8UC3, cv::Scalar(0, 0, 0));
@@ -348,13 +348,15 @@ void drawPoints(const std::vector<cv::Point2d>& map, const std::vector<cv::Point
   std::string title = "Image " + ss.str();
 
   // Display the image
-  cv::imshow(title, img);
-  cv::waitKey(0);
+  // cv::imshow(title, img);
+  // cv::waitKey(0);
+  self->det_match_pub.publish(cv_bridge::CvImage(std_msgs::Header(), "bgr8", img).toImageMsg());
 }
 
 // ##### esta función es la que calcula el error sabiendo donde esta la proyección teórica (la recibida) y la del mapa
 std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& observation,
-                                                    std::vector<cv::Point2d> projected_map_marker)
+                                                    std::vector<cv::Point2d> projected_map_marker,
+                                                    AMCLMarker* self)
 {
   // ### projected_observation = observation[j].getMarkerPoints(), Son la position observada de cada corner en la imagen
   // recibida
@@ -405,10 +407,10 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
       //           << "Total: " << error << endl;
     }
 
-    // if (errorv < this->min_error)
-    // {
-    drawPoints(projected_map_marker, projected_observation_matched, errorv);
-    // }
+    if (errorv < this->min_error)
+    {
+      drawPoints(projected_map_marker, projected_observation_matched, errorv, self);
+    }
     observation_errors[j] = errorv;
   }
 
