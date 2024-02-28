@@ -28,7 +28,7 @@
     <arg name="map_path" default="$(find amcl_hybrid)/../../../maps/" />
     <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_path)$(arg map_file)" />
 
-    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find tiago_description)/robots/tiago.urdf.xacro'" />
+    <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find tiago_description)/robots/tiago.urdf.xacro'" /> -->
 
     
     <!-- 5. Rectangle Detector Node-->

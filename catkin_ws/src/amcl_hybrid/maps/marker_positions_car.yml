@@ -1,68 +1,210 @@
 marker_positions:
-- ID: 0
+- ID: 0 # Cartel 1
   map: 0
   sector: 0
   pitch: 0.0
   roll: 0.0
   width: 1.0
-  height: 0.5
-  x: 9.318
-  y: 0.913
-  z: 0.975
-  yaw: -1.5707963267948966
-- ID: 1
-  map: 0
-  sector: 0
-  pitch: 0.0
-  roll: 0.0
-  width: 1.0
-  height: 1.0
-  x: 14.807
-  y: 0.913
-  z: 1.022
-  yaw: -1.5707963267948966
-- ID: 2
-  map: 0
-  sector: 0
-  pitch: 0.0
-  roll: 0.0
-  width: 0.6
-  height: 0.8
-  x: 28.609
-  y: 0.913
-  z: 1.022
-  yaw: -1.5707963267948966
-- ID: 3
-  map: 0
-  sector: 0
-  pitch: 0.0
-  roll: 0.0
-  width: 0.3
-  height: 0.4
-  x: 32.105
-  y: 0.765
-  z: 1.419
+  height: 0.31
+  x: 6.659
+  y: 2.922
+  z: 1.923
   yaw: -3.141592653589793
-- ID: 4
+- ID: 1 # Marco 1
   map: 0
   sector: 0
   pitch: 0.0
   roll: 0.0
-  width: 0.4
-  height: 0.6
-  x: 12.141
-  y: -0.983
-  z: 1.022
-  yaw: 1.5707963267948966
-- ID: 5
+  width: 2.699
+  height: 1.023
+  x: 4.297
+  y: 0.923
+  z: 1.578
+  yaw: -1.5707963267948966
+- ID: 2 # Ventana 1
   map: 0
   sector: 0
   pitch: 0.0
   roll: 0.0
-  width: 0.8
-  height: 1.664
-  x: 21.167
-  y: -0.983
-  z: 0.839
+  width: 2.599
+  height: 0.923
+  x: 4.297
+  y: 1.008
+  z: 1.578
+  yaw: -1.5707963267948966
+- ID: 3 # Marco 2
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 2.699
+  height: 1.023
+  x: 8.914
+  y: 0.923
+  z: 1.581
+  yaw: -1.5707963267948966
+- ID: 4 # Ventana 2
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 2.599
+  height: 0.923
+  x: 8.914
+  y: 1.008
+  z: 1.581
+  yaw: -1.5707963267948966
+- ID: 5 # Puerta 1
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 1.372
+  height: 2.108
+  x: 11.203
+  y: 0.913
+  z: 1.054
+  yaw: -1.5707963267948966
+- ID: 6 # Puerta 2
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 1.372
+  height: 2.108
+  x: 13.386
+  y: 0.913
+  z: 1.054
+  yaw: -1.5707963267948966
+- ID: 7 # Cartel 2
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.7853981633974483
+  width: 0.34
+  height: 0.34
+  x: 13.445
+  y: 1.013
+  z: 1.560
+  yaw: -1.5707963267948966
+- ID: 8 # Marco 3
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 2.699
+  height: 1.023
+  x: 15.694
+  y: 0.923
+  z: 1.588
+  yaw: -1.5707963267948966
+- ID: 9 # Ventana 3
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 2.599
+  height: 0.923
+  x: 15.694
+  y: 1.008
+  z: 1.588
+  yaw: -1.5707963267948966
+- ID: 10 # Marco 4
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 4.161
+  height: 1.035
+  x: 20.198
+  y: 0.923
+  z: 1.574
+  yaw: -1.5707963267948966
+- ID: 11 # Ventana 4
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 2.587
+  height: 0.962
+  x: 19.451
+  y: 1.008
+  z: 1.574
+  yaw: -1.5707963267948966
+- ID: 12 # Ventana 5
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 1.253
+  height: 0.962
+  x: 21.595
+  y: 1.008
+  z: 1.574
+  yaw: -1.5707963267948966
+- ID: 13 # Radiador 1
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 0.894
+  height: 0.870
+  x: 2.974
+  y: -0.91
+  z: 0.435
   yaw: 1.5707963267948966
-
+- ID: 14 # Radiador 2
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 0.787
+  height: 0.753
+  x: 9.060
+  y: -0.91
+  z: 0.377
+  yaw: 1.5707963267948966
+- ID: 15 # Puerta 3
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 0.98
+  height: 2.112
+  x: 10.194
+  y: -0.90
+  z: 1.056
+  yaw: 1.5707963267948966
+- ID: 16 # Puerta 4
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 0.98
+  height: 2.112
+  x: 11.260
+  y: -0.90
+  z: 1.056
+  yaw: 1.5707963267948966
+- ID: 17 # Puerta 5
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 0.98
+  height: 2.112
+  x: 14.100
+  y: -0.90
+  z: 1.056
+  yaw: 1.5707963267948966
+- ID: 18 # Radiador 3
+  map: 0
+  sector: 0
+  pitch: 0.0
+  roll: 0.0
+  width: 0.797
+  height: 0.748
+  x: 21.265
+  y: -0.91
+  z: 0.374
+  yaw: 1.5707963267948966

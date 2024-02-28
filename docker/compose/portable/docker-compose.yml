@@ -38,5 +38,12 @@ services:
     stdin_open: true
     tty: true
     privileged: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     
   
