@@ -63,3 +63,4 @@ catkin_ws/src/slam_toolbox
 catkin_ws/src/slam_toolbox
 simulation/tiago_robot
 simulation/.thumbs/*
+**/*.png
