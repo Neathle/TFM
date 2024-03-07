@@ -418,10 +418,10 @@ std::pair<size_t, float> AMCLMarker::calculateError(std::vector<Marcador>& obser
       std::distance(observation_errors.begin(), std::min_element(observation_errors.begin(), observation_errors.end()));
 
   float min_error = observation_errors[min_error_index];
-  if (min_error < this->min_error)  // TODO: set this threshold to a reasonable value, curretly it is not filtering
-  {
-    ROS_WARN_STREAM("Sucessfully detected Marker -> error: " << min_error);
-  }
+  // if (min_error < this->min_error)  // TODO: set this threshold to a reasonable value, curretly it is not filtering
+  // {
+  //   ROS_WARN_STREAM("Sucessfully detected Marker -> error: " << min_error);
+  // }
   return std::make_pair(min_error_index, min_error);  // retornamos el id y error minimo
 }
 

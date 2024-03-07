@@ -78,12 +78,12 @@
         <param name="NUM_CAM" value ="1" /> <!-- Only work with 1 camera, do not change it-->
         <param name = "marker_model_type" value="observation_likelihood"/>
 
-        <param name="min_error" value="0.08"/>
+        <param name="min_error" value="0.03"/>
         <param name="use_map_topic" value="true"/>
-        <param name="marker_z_hit" value="0.99"/>
-        <param name="marker_z_rand" value ="0.01"/>
+        <param name="marker_z_hit" value="1"/>
+        <param name="marker_z_rand" value ="0.0"/>
         <param name="marker_sigma_hit" value="0.1"/>
-        <param name="marker_landa" value="2"/>
+        <param name="marker_landa" value="1.5"/>
         <param name="base_frame_id" value="$(arg base_frame_robot)" /> 
         <param name="odom_frame_id" value="$(arg odom_frame)"/>
         <param name="global_frame_id" value="$(arg global_frame)"/>
@@ -93,9 +93,9 @@
         <param name="topic_output_video" value="$(arg topic_output_video)"/>
         <param name="topic_marker" value="$(arg topic_marker)"/>
 
-        <!--for FUSION laser-camera-->
+        <!--for FUSION laser-camera--> 
         <param name="laser_coeff" value="1.0"/>
-        <param name="camera_coeff" value="1.0"/>
+        <param name="camera_coeff" value="0.0"/>
 
         <!-- simulation or real (Only work with value 1 = simulation, do not change it) -->
         <param name="simulation" value = "1"/>

@@ -168,7 +168,9 @@ public:
               left_pos = -M_PI - left_pos;
             }
         }
-        left_pos = unwrap(left_pos, true) + distribution(generator);
+        double slip = 1.02;
+        left_pos = unwrap(left_pos, true) * slip + distribution(generator);;
+
 
         // ROS_WARN_STREAM_NAMED(name_, "old_left_pos: " << old_left_pos << ", left_pos: " << left_pos << ", yaw:" << yaw);
 
@@ -184,8 +186,9 @@ public:
               right_pos = -M_PI - right_pos;
             }
         }
-        right_pos = unwrap(right_pos, false) + distribution(generator);
 
+        right_pos = unwrap(right_pos, false) * slip + distribution(generator);
+        
         // ROS_WARN_STREAM_NAMED(name_,  "old_right_pos: " << old_right_pos << ", right_pos: " << right_pos << ", yaw:" << yaw);
 
         update(transform.stamp_ , publish_period_, left_pos, right_pos);

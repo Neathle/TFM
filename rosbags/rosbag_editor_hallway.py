@@ -32,24 +32,24 @@ ODOM_GT_T = [
     291.00e9,
 ]
 ODOM_GT_K = [
-  1.649/ 1.542,
-  1.649/ 1.542,
-  4.064/ 3.850,
-  4.064/ 3.850,
-  5.739/ 5.550,
-  5.739/ 5.550,
-  7.770/ 7.585,
-  7.770/ 7.585,
-  9.704/ 9.492,
-  9.704/ 9.492,
- 12.352/12.127,
- 12.352/12.127,
- 17.133/16.872,
- 17.133/16.872,
- 21.428/21.000,
- 21.428/21.000,
- 24.690/24.253,
- 24.690/24.253,
+  1.569/ 1.542,
+  1.569/ 1.542,
+  3.984/ 3.850,
+  3.984/ 3.850,
+  5.659/ 5.550,
+  5.659/ 5.550,
+  7.690/ 7.585,
+  7.690/ 7.585,
+  9.624/ 9.492,
+  9.624/ 9.492,
+ 12.272/12.127,
+ 12.272/12.127,
+ 17.053/16.872,
+ 17.053/16.872,
+ 21.348/21.000,
+ 21.348/21.000,
+ 24.610/24.253,
+ 24.610/24.253,
 ]
 
 
@@ -57,10 +57,14 @@ init_time = Time(0)
 init_time_isset = False
 def publish_odom_gt(msg: Odometry, t: Time, outbag: rosbag.bag.Bag):
     gt = deepcopy(msg)
-    gt.header.frame_id = "odom_gt"
+    gt.header.frame_id = "map"
     k = np.interp((t-init_time).to_nsec(), ODOM_GT_T, ODOM_GT_K)
     gt.pose.pose.position.x *= k
-    gt.pose.pose.position.y /= 5*k
+    gt.pose.pose.position.y = 0
+    gt.pose.pose.position.z = 0
+    gt.pose.pose.orientation.x = 0
+    gt.pose.pose.orientation.y = 0
+    gt.pose.pose.orientation.z = 0
     
     outbag.write("/odom_gt", gt, t)
     outbag.write("/odom", msg, t)
@@ -83,11 +87,3 @@ with rosbag.Bag("/home/neathle/TFM/rosbags/hallway_gt.bag", "w") as outbag:
             continue
 
         outbag.write(topic, msg, t, connection_header=ch)
-
-# base_link -> base_laser_link
-# - Translation: [0.202000000000, 0.000000000000, -0.004000000000]
-# - Rotation: in Quaternion [0.000000000000, 0.000000000000, 0.000000000000, 1.000000000000]
-
-# base_link -> xtion_rgb_optical_frame
-# - Translation: [0.222301203927, 0.017722121083, 1.112804230859]
-# - Rotation: in Quaternion [0.497653755889, -0.503970958085, 0.508199910040, -0.489986595828]

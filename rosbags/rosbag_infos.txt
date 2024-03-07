@@ -1,0 +1,38 @@
+path:        ../rosbags/hallway_gt.bag
+version:     2.0
+duration:    4:50s (290s)
+start:       Feb 09 2024 17:50:04.94 (1707501004.94)
+end:         Feb 09 2024 17:54:55.54 (1707501295.54)
+size:        7.5 GB
+messages:    43906
+compression: none [8732/8732 chunks]
+types:       nav_msgs/Odometry      [cd5e73d190d741a2f92e81eda573aca7]
+             sensor_msgs/CameraInfo [c9a58c1b0b154e0e6da7578cb991d214]
+             sensor_msgs/Image      [060021388200f6f0f447d0fcd9c64743]
+             sensor_msgs/LaserScan  [90c7ef2dc6895d81024acba2ac42f369]
+             tf2_msgs/TFMessage     [94810edda583a504dfda3829e70d7eec]
+topics:      /odom                          4359 msgs    : nav_msgs/Odometry     
+             /odom_gt                       4359 msgs    : nav_msgs/Odometry     
+             /scan                          4359 msgs    : sensor_msgs/LaserScan 
+             /tf                           13366 msgs    : tf2_msgs/TFMessage    
+             /tf_static                        1 msg     : tf2_msgs/TFMessage    
+             /xtion/rgb/camera_info         8731 msgs    : sensor_msgs/CameraInfo
+             /xtion/rgb/image_rect_color    8731 msgs    : sensor_msgs/Image
+
+
+path:        ../rosbags/test_hybrid_2024-03-02-23-04-03_x.bag
+version:     2.0
+duration:    4:50s (290s)
+start:       Feb 09 2024 17:50:05.02 (1707501005.02)
+end:         Feb 09 2024 17:54:55.48 (1707501295.48)
+size:        6.7 MB
+messages:    10642
+compression: none [9/9 chunks]
+types:       detector/num_markers                    [6647b7157d2eaa121f70d2a06b9e2efb]
+             geometry_msgs/PoseWithCovarianceStamped [953b798c0f514ff060a53a3498ce6246]
+             nav_msgs/Odometry                       [cd5e73d190d741a2f92e81eda573aca7]
+topics:      /amcl_pose                            129 msgs    : geometry_msgs/PoseWithCovarianceStamped
+             /odom                                4358 msgs    : nav_msgs/Odometry                      
+             /odom_gt                             4358 msgs    : nav_msgs/Odometry                      
+             /rectangle_detector/num_detections   1797 msgs    : detector/num_markers
+
