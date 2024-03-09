@@ -637,31 +637,34 @@ std::vector<size_t> AMCLMarker::FilterPointsByFOV(geometry_msgs::Pose CamaraMund
 
   for (size_t j = 0; j < self->map.size(); j++)
   {
-    // const std::vector<geometry_msgs::Point> corners = self->map[j].ReltoCam;
-    // std::vector<bool> corners_accepted;
+    const std::vector<geometry_msgs::Point> corners = self->map[j].ReltoCam;
+    std::vector<bool> corners_accepted;
 
-    // for (size_t i = 0; i < corners.size(); i++)
-    // {
-    //   const geometry_msgs::Point corner = corners[i];
-    //   // STEP 1. Discard marker if any points are behind the camera: x<0
-    //   if (corner.x < 0)
-    //     break;  // do not bother calculating more corners if a single one fails
+    for (size_t i = 0; i < corners.size(); i++)
+    {
+      const geometry_msgs::Point corner = corners[i];
+      // STEP 1. Discard marker if any points are behind the camera: x<0
+      if (corner.z < 0 || corner.z > 10) //guard statement
+      {
+        break;  // do not bother calculating more corners if a single one fails
+      }
 
-    //   // STEP 2. Keep points inside the cone: y^2 + x^2 <= (tan(dfov / 2))^2 * z^2
-    //   if (std::pow(corner.y, 2) + std::pow(corner.x, 2) <= std::pow(std::tan(dfov / 2), 2) * std::pow(corner.z, 2))
-    //   {
-    //     corners_accepted.push_back(true);
-    //   } else {
-    //     break;  // do not bother calculating more corners if a single one fails
-    //   }
-    // }
+      // STEP 2. Keep points inside the cone: y^2 + x^2 <= (tan(dfov / 2))^2 * z^2
+      if (std::pow(corner.y, 2) + std::pow(corner.x, 2) <= std::pow(std::tan(dfov / 2), 2) * std::pow(corner.z, 2))
+      {
+        corners_accepted.push_back(true);
+      } else {
+        break;  // do not bother calculating more corners if a single one fails
+      }
+    }
 
-    // // STEP 3. Only markers with all corners inside the cone shall be projected
-    // if (corners_accepted.size() == corners.size())
-    // {
-    //   filtered_marker_indices.push_back(j);
-    // }
-    filtered_marker_indices.push_back(j);
+    // STEP 3. Only markers with all corners inside the cone shall be projected
+    if (corners_accepted.size() == corners.size())
+    {
+      filtered_marker_indices.push_back(j);
+      // ROS_WARN_STREAM("Marker " << j << " accepted");
+    }
+    // filtered_marker_indices.push_back(j); //bypass filter
   }
 
   return filtered_marker_indices;

@@ -3,22 +3,21 @@
  <tabbed_widget name="Main Window" parent="main_window">
   <Tab tab_name="tab1" containers="1">
    <Container>
-    <DockSplitter sizes="1" count="1" orientation="-">
+    <DockSplitter orientation="-" sizes="1" count="1">
      <DockArea name="...">
-      <plot mode="TimeSeries" flip_y="false" style="StepsInv" flip_x="false">
-       <range top="0.500000" right="285.920270" bottom="-0.026981" left="0.000000"/>
-       <limitY max="0.5"/>
-       <curve color="#c3af12" name="ape_08_200_1"/>
-       <curve color="#d62728" name="ape_05_200_1"/>
-       <curve color="#1ac938" name="ape_05_173_1"/>
-       <curve color="#b41f6b" name="ape_08_173_1"/>
-       <curve color="#1f77b4" name="ape_05_020_5"/>
-       <curve color="#d62728" name="ape_05_025_7"/>
-       <curve color="#3b7449" name="ape_03_200_1"/>
-       <curve color="#a99596" name="ape_03_500_1"/>
-       <curve color="#730d98" name="ape_03_150_1"/>
-       <curve color="#ff7f0e" name="ape_03_100_1"/>
-       <curve color="#f14cc1" name="ape_05_150_1"/>
+      <plot flip_x="false" style="StepsInv" flip_y="false" mode="TimeSeries">
+       <range top="0.347941" left="0.000000" right="282.642646" bottom="-0.008274"/>
+       <limitY/>
+       <curve name="ape_laser_0" color="#d70f4e"/>
+       <curve name="ape_laser_1" color="#e8488c"/>
+       <curve name="ape_laser_2" color="#eb425d"/>
+       <curve name="ape_laser_3" color="#cc341c"/>
+       <curve name="ape_laser_4" color="#f71d8f"/>
+       <curve name="ape_laser_5" color="#f15c7f"/>
+       <curve name="ape_laser_6" color="#b50091"/>
+       <curve name="ape_laser_7" color="#a71623"/>
+       <curve name="ape_laser_8" color="#6b2202"/>
+       <curve name="ape_laser_9" color="#931241"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -31,7 +30,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <Plugins>
   <plugin ID="DataLoad CSV">
-   <parameters delimiter="0" time_axis=""/>
+   <parameters time_axis="" delimiter="0"/>
   </plugin>
   <plugin ID="DataLoad MCAP"/>
   <plugin ID="DataLoad ROS bags">
@@ -66,27 +65,7 @@
  </Plugins>
  <!-- - - - - - - - - - - - - - - -->
  <previouslyLoaded_Datafiles>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_173_1.bag" prefix="05_173_1">
-   <plugin ID="DataLoad ROS bags">
-    <use_header_stamp value="false"/>
-    <discard_large_arrays value="true"/>
-    <max_array_size value="100"/>
-    <boolean_strings_to_number value="true"/>
-    <remove_suffix_from_strings value="true"/>
-    <selected_topics value="/amcl_pose"/>
-   </plugin>
-  </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_200_1.bag" prefix="05_200_1">
-   <plugin ID="DataLoad ROS bags">
-    <use_header_stamp value="false"/>
-    <discard_large_arrays value="true"/>
-    <max_array_size value="100"/>
-    <boolean_strings_to_number value="true"/>
-    <remove_suffix_from_strings value="true"/>
-    <selected_topics value="/amcl_pose"/>
-   </plugin>
-  </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_1/car_el_hybrid.bag" prefix="08_200_1">
+  <fileInfo prefix="car_laser_0" filename="../../rosbags/car_el_5/car_laser_0.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -96,7 +75,7 @@
     <selected_topics value="/amcl_pose;/odom_gt"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_08_173_1.bag" prefix="08_173_1">
+  <fileInfo prefix="car_laser_1" filename="../../rosbags/car_el_5/car_laser_1.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -106,7 +85,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_025_7.bag" prefix="05_025_7">
+  <fileInfo prefix="car_laser_2" filename="../../rosbags/car_el_5/car_laser_2.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -116,7 +95,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_03_200_1.bag" prefix="03_200_1">
+  <fileInfo prefix="car_laser_3" filename="../../rosbags/car_el_5/car_laser_3.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -126,7 +105,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_03_500_1.bag" prefix="03_500_1">
+  <fileInfo prefix="car_laser_4" filename="../../rosbags/car_el_5/car_laser_4.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -136,7 +115,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_03_150_1.bag" prefix="03_150_1">
+  <fileInfo prefix="car_laser_5" filename="../../rosbags/car_el_5/car_laser_5.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -146,7 +125,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_03_100_1.bag" prefix="03_100_1">
+  <fileInfo prefix="car_laser_6" filename="../../rosbags/car_el_5/car_laser_6.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -156,7 +135,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_150_1.bag" prefix="05_150_1">
+  <fileInfo prefix="car_laser_7" filename="../../rosbags/car_el_5/car_laser_7.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -166,7 +145,17 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_020_5.bag" prefix="05_020_5">
+  <fileInfo prefix="car_laser_8" filename="../../rosbags/car_el_5/car_laser_8.bag">
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+    <boolean_strings_to_number value="true"/>
+    <remove_suffix_from_strings value="true"/>
+    <selected_topics value="/amcl_pose"/>
+   </plugin>
+  </fileInfo>
+  <fileInfo prefix="car_laser_9" filename="../../rosbags/car_el_5/car_laser_9.bag">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -179,92 +168,84 @@
  </previouslyLoaded_Datafiles>
  <!-- - - - - - - - - - - - - - - -->
  <customMathEquations>
-  <snippet name="ape_05_020_5">
+  <snippet name="ape_laser_0">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_020_5/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_0/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_05_173_1">
+  <snippet name="ape_laser_1">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_173_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_1/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_05_200_1">
+  <snippet name="ape_laser_2">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_200_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_2/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_08_200_1">
+  <snippet name="ape_laser_3">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>08_200_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_3/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_05_150_1">
+  <snippet name="ape_laser_4">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_150_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_4/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_05_025_7">
+  <snippet name="ape_laser_8">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_025_7/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_8/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_08_173_1">
+  <snippet name="ape_laser_7">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>08_173_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_7/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_03_500_1">
+  <snippet name="ape_laser_5">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>03_500_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_5/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_03_200_1">
+  <snippet name="ape_laser_6">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>03_200_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_6/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_03_150_1">
+  <snippet name="ape_laser_9">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>03_150_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_laser_9/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
-   </additional_sources>
-  </snippet>
-  <snippet name="ape_03_100_1">
-   <global></global>
-   <function>return math.abs(value-v1)</function>
-   <linked_source>03_100_1/amcl_pose/pose/pose/position/x</linked_source>
-   <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_laser_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
  </customMathEquations>

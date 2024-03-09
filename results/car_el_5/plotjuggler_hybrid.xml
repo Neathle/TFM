@@ -1,24 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <root>
- <tabbed_widget name="Main Window" parent="main_window">
-  <Tab tab_name="tab1" containers="1">
+ <tabbed_widget parent="main_window" name="Main Window">
+  <Tab containers="1" tab_name="tab1">
    <Container>
-    <DockSplitter sizes="1" count="1" orientation="-">
+    <DockSplitter count="1" orientation="-" sizes="1">
      <DockArea name="...">
-      <plot mode="TimeSeries" flip_y="false" style="StepsInv" flip_x="false">
-       <range top="0.500000" right="285.920270" bottom="-0.026981" left="0.000000"/>
-       <limitY max="0.5"/>
-       <curve color="#c3af12" name="ape_08_200_1"/>
-       <curve color="#d62728" name="ape_05_200_1"/>
-       <curve color="#1ac938" name="ape_05_173_1"/>
-       <curve color="#b41f6b" name="ape_08_173_1"/>
-       <curve color="#1f77b4" name="ape_05_020_5"/>
-       <curve color="#d62728" name="ape_05_025_7"/>
-       <curve color="#3b7449" name="ape_03_200_1"/>
-       <curve color="#a99596" name="ape_03_500_1"/>
-       <curve color="#730d98" name="ape_03_150_1"/>
-       <curve color="#ff7f0e" name="ape_03_100_1"/>
-       <curve color="#f14cc1" name="ape_05_150_1"/>
+      <plot style="StepsInv" flip_x="false" flip_y="false" mode="TimeSeries">
+       <range right="285.455029" top="0.700000" bottom="-0.018228" left="0.000000"/>
+       <limitY max="0.7"/>
+       <curve name="ape_hybrid_0" color="#0fced7"/>
+       <curve name="ape_hybrid_1" color="#48b0e8"/>
+       <curve name="ape_hybrid_2" color="#42a7eb"/>
+       <curve name="ape_hybrid_3" color="#1c92cc"/>
+       <curve name="ape_hybrid_4" color="#1d46f7"/>
+       <curve name="ape_hybrid_5" color="#635cf1"/>
+       <curve name="ape_hybrid_6" color="#00abb5"/>
+       <curve name="ape_hybrid_7" color="#167ea7"/>
+       <curve name="ape_hybrid_8" color="#02406b"/>
+       <curve name="ape_hybrid_9" color="#122393"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -31,7 +30,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <Plugins>
   <plugin ID="DataLoad CSV">
-   <parameters delimiter="0" time_axis=""/>
+   <parameters time_axis="" delimiter="0"/>
   </plugin>
   <plugin ID="DataLoad MCAP"/>
   <plugin ID="DataLoad ROS bags">
@@ -66,27 +65,7 @@
  </Plugins>
  <!-- - - - - - - - - - - - - - - -->
  <previouslyLoaded_Datafiles>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_173_1.bag" prefix="05_173_1">
-   <plugin ID="DataLoad ROS bags">
-    <use_header_stamp value="false"/>
-    <discard_large_arrays value="true"/>
-    <max_array_size value="100"/>
-    <boolean_strings_to_number value="true"/>
-    <remove_suffix_from_strings value="true"/>
-    <selected_topics value="/amcl_pose"/>
-   </plugin>
-  </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_200_1.bag" prefix="05_200_1">
-   <plugin ID="DataLoad ROS bags">
-    <use_header_stamp value="false"/>
-    <discard_large_arrays value="true"/>
-    <max_array_size value="100"/>
-    <boolean_strings_to_number value="true"/>
-    <remove_suffix_from_strings value="true"/>
-    <selected_topics value="/amcl_pose"/>
-   </plugin>
-  </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_1/car_el_hybrid.bag" prefix="08_200_1">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_0.bag" prefix="car_hybrid_0">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -96,7 +75,7 @@
     <selected_topics value="/amcl_pose;/odom_gt"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_08_173_1.bag" prefix="08_173_1">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_1.bag" prefix="car_hybrid_1">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -106,7 +85,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_025_7.bag" prefix="05_025_7">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_2.bag" prefix="car_hybrid_2">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -116,7 +95,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_03_200_1.bag" prefix="03_200_1">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_3.bag" prefix="car_hybrid_3">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -126,7 +105,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_03_500_1.bag" prefix="03_500_1">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_4.bag" prefix="car_hybrid_4">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -136,7 +115,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_03_150_1.bag" prefix="03_150_1">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_5.bag" prefix="car_hybrid_5">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -146,7 +125,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_03_100_1.bag" prefix="03_100_1">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_6.bag" prefix="car_hybrid_6">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -156,7 +135,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_150_1.bag" prefix="05_150_1">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_7.bag" prefix="car_hybrid_7">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -166,7 +145,17 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_4/car_el_hybrid_05_020_5.bag" prefix="05_020_5">
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_8.bag" prefix="car_hybrid_8">
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+    <boolean_strings_to_number value="true"/>
+    <remove_suffix_from_strings value="true"/>
+    <selected_topics value="/amcl_pose"/>
+   </plugin>
+  </fileInfo>
+  <fileInfo filename="../../rosbags/car_el_5/car_hybrid_9.bag" prefix="car_hybrid_9">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -179,92 +168,84 @@
  </previouslyLoaded_Datafiles>
  <!-- - - - - - - - - - - - - - - -->
  <customMathEquations>
-  <snippet name="ape_05_020_5">
+  <snippet name="ape_hybrid_0">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_020_5/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_0/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_05_173_1">
+  <snippet name="ape_hybrid_1">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_173_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_1/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_05_200_1">
+  <snippet name="ape_hybrid_7">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_200_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_7/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_08_200_1">
+  <snippet name="ape_hybrid_2">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>08_200_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_2/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_05_150_1">
+  <snippet name="ape_hybrid_3">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_150_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_3/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_05_025_7">
+  <snippet name="ape_hybrid_4">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>05_025_7/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_4/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_08_173_1">
+  <snippet name="ape_hybrid_8">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>08_173_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_8/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_03_500_1">
+  <snippet name="ape_hybrid_5">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>03_500_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_5/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_03_200_1">
+  <snippet name="ape_hybrid_6">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>03_200_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_6/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_03_150_1">
+  <snippet name="ape_hybrid_9">
    <global></global>
    <function>return math.abs(value-v1)</function>
-   <linked_source>03_150_1/amcl_pose/pose/pose/position/x</linked_source>
+   <linked_source>car_hybrid_9/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
-   </additional_sources>
-  </snippet>
-  <snippet name="ape_03_100_1">
-   <global></global>
-   <function>return math.abs(value-v1)</function>
-   <linked_source>03_100_1/amcl_pose/pose/pose/position/x</linked_source>
-   <additional_sources>
-    <v1>08_200_1/odom_gt/pose/pose/position/x</v1>
+    <v1>car_hybrid_0/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
  </customMathEquations>

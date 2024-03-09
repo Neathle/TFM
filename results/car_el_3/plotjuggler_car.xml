@@ -8,9 +8,9 @@
       <plot flip_x="false" style="StepsInv" flip_y="false" mode="TimeSeries">
        <range bottom="-0.015035" top="0.616422" right="283.772155" left="0.000000"/>
        <limitY/>
-       <curve color="#1f77b4" name="ape_hybrid"/>
-       <curve color="#d62728" name="ape_laser"/>
-       <curve color="#1ac938" name="ape_marker"/>
+       <curve color="#1f77b4" name="ape_hybrid_3"/>
+       <curve color="#d62728" name="ape_laser_3"/>
+       <curve color="#1ac938" name="ape_marker_3"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -58,7 +58,7 @@
  </Plugins>
  <!-- - - - - - - - - - - - - - - -->
  <previouslyLoaded_Datafiles>
-  <fileInfo filename="../../rosbags/car_el_3/car_el_hybrid.bag" prefix="car_el_hybrid">
+  <fileInfo filename="../../rosbags/car_el_3/car_el_hybrid.bag" prefix="car_el_hybrid_3">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -68,7 +68,7 @@
     <selected_topics value="/amcl_pose;/odom_gt;/odom;/rectangle_detector/num_detections"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_3/car_el_laser.bag" prefix="car_el_laser">
+  <fileInfo filename="../../rosbags/car_el_3/car_el_laser.bag" prefix="car_el_laser_3">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -78,7 +78,7 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo filename="../../rosbags/car_el_3/car_el_marker.bag" prefix="car_el_marker">
+  <fileInfo filename="../../rosbags/car_el_3/car_el_marker.bag" prefix="car_el_marker_3">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -91,28 +91,28 @@
  </previouslyLoaded_Datafiles>
  <!-- - - - - - - - - - - - - - - -->
  <customMathEquations>
-  <snippet name="ape_marker">
+  <snippet name="ape_marker_3">
    <global></global>
-   <function>return (value-v1)^2</function>
-   <linked_source>car_el_marker/amcl_pose/pose/pose/position/x</linked_source>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_marker_3/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>car_el_hybrid/odom_gt/pose/pose/position/x</v1>
+    <v1>car_el_hybrid_3/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_laser">
+  <snippet name="ape_laser_3">
    <global></global>
-   <function>return (value-v1)^2</function>
-   <linked_source>car_el_laser/amcl_pose/pose/pose/position/x</linked_source>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_laser_3/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>car_el_hybrid/odom_gt/pose/pose/position/x</v1>
+    <v1>car_el_hybrid_3/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
-  <snippet name="ape_hybrid">
+  <snippet name="ape_hybrid_3">
    <global></global>
-   <function>return (value-v1)^2</function>
-   <linked_source>car_el_hybrid/amcl_pose/pose/pose/position/x</linked_source>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_hybrid_3/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
-    <v1>car_el_hybrid/odom_gt/pose/pose/position/x</v1>
+    <v1>car_el_hybrid_3/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
  </customMathEquations>

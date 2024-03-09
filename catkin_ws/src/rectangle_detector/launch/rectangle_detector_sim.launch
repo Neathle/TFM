@@ -30,25 +30,26 @@
                     - angle: Chechs that the angles of the trapezoid are close to 90º, also check that at least one of the sides is horizontal
                              or vertical.
         -->
-        <param name="max_num_trapezoids" value="100" /> <!-- Permissive higher -->
+        <param name="max_num_trapezoids" value="500" /> <!-- Permissive higher -->
         <param name="elongation_factor" value="1.15" /> <!-- Permissive higher -->
-        <param name="whiteness_threshold" value="0.25" /> <!-- Permissive lower -->
-        <param name="nms_threshold" value="1" /> <!-- Permissive lower -->
-        <param name="lineImg_drawing_width" value="1" /> <!-- Permissive higher -->
-        <param name="rects_min_area_factor" value="0.01" /> <!-- Permissive lower -->
+        <param name="whiteness_threshold" value="0.75" /> <!-- Permissive lower -->
+        <param name="nms_threshold" value="5" /> <!-- Permissive lower -->
+        <param name="lineImg_drawing_width" value="2" /> <!-- Permissive higher -->
+        <param name="rects_min_area_factor" value="0.001" /> <!-- Permissive lower -->
         <param name="rects_max_area_factor" value="0.6" /> <!-- Permissive higher -->
-        <param name="compactness_threshold" value="0.2" /> <!-- Permissive lower -->
-        <param name="length_diff_threshold" value="0.05" /> <!-- Permissive lower -->
+        <param name="compactness_threshold" value="0.4" /> <!-- Permissive lower -->
+        <param name="length_diff_threshold" value="0.08" /> <!-- Permissive lower -->
         <param name="angle_threshold" value="0.6" /> <!-- Permissive higher -->
         
         <param name="draw_intersections" value="true" /> <!-- Turn off for performance -->
         <param name="draw_graph" value="true" /> <!-- Turn off for performance -->
         <param name="draw_trapezoids" value="true" /> <!-- Turn off for performance -->
         <param name="rectImg_drawing_width" value="2" /> <!-- Aesthetics -->
-
+        <param name="execution_period" value="1.0" /> <!-- Aesthetics -->
 
     </node>
-        
+    
+    <!-- <node pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find rectangle_detector)/config/rviz_visualizer.rviz" /> -->
     <!-- <node pkg="image_publisher" type="image_publisher" name="image_publisher" args="/home/neathle/Desktop/German/marker_rviz.png" >
 
         <param name="flip_horizontal" value="false" />

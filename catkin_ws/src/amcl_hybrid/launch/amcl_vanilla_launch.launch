@@ -4,10 +4,10 @@
     <!-- roslaunch amcl_hybrid amcl_vanilla_launch.launch 2>&1 | grep -v 'TF_REPEATED_DATA\|binarydeb' -->
     <!-- rosbag play ../rosbags/hallway_2024-02-09-17-50-04.bag /xtion/rgb/image_rect_color:=/rgb /xtion/rgb/camera_info:=/amcl_hybrid/camera_info -->
 
-    <arg name="environment" default="long_gallery"/>
+    <arg name="environment" default="car"/>
     <!-- 
     Available environments:
-        1. mocap
+        1. car
         2. long_hallway
         3. long_gallery
     -->
@@ -32,17 +32,17 @@
 
     
     <!-- 5. Rectangle Detector Node-->
-    <include file="$(find rectangle_detector)/launch/rectangle_detector_sim.launch">
+    <include file="$(find rectangle_detector)/launch/rectangle_detector_orbec.launch">
         
     </include>
 
     <!-- Rosbag -->
-    <node name="play" pkg="rosbag" type="play" required="true" args="$(find amcl_hybrid)/../../../rosbags/long_gallery_gt.bag --clock">
-        <!-- <remap from="/xtion/rgb/image_rect_color" to="/rgb"/>
-        <remap from="/xtion/rgb/camera_info" to="/amcl_hybrid/camera_info"/> -->
+    <node name="play" pkg="rosbag" type="play" required="true" args="$(find amcl_hybrid)/../../../rosbags/$(arg environment)_gt.bag --clock -r 5">
+        <remap from="/xtion/rgb/image_rect_color" to="/rgb"/>
+        <remap from="/xtion/rgb/camera_info" to="/amcl_hybrid/camera_info"/>
     </node>
     <!-- Rosbag -->
-    <node name="record" pkg="rosbag" type="record" args="-o $(find amcl_hybrid)/../../../rosbags/long_gall.bag /odom /odom_gt /amcl_pose /rectangle_detector/num_detections">
-    </node>
+    <!-- <node name="record" pkg="rosbag" type="record" args="-o $(find amcl_hybrid)/../../../rosbags/car_el_5/$(arg environment)_hybrid2_.bag /odom /odom_gt /amcl_pose /rectangle_detector/num_detections">
+    </node> -->
 
 </launch>

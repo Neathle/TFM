@@ -1,16 +1,22 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <root>
  <tabbed_widget name="Main Window" parent="main_window">
-  <Tab containers="1" tab_name="tab1">
+  <Tab tab_name="tab1" containers="1">
    <Container>
     <DockSplitter orientation="-" sizes="1" count="1">
      <DockArea name="...">
-      <plot flip_y="false" mode="TimeSeries" style="StepsInv" flip_x="false">
-       <range right="283.784339" bottom="-0.011589" left="0.000000" top="0.475169"/>
-       <limitY/>
-       <curve color="#1f77b4" name="ape_hybrid_1"/>
-       <curve color="#d62728" name="ape_laser_1"/>
-       <curve color="#1ac938" name="ape_marker_1"/>
+      <plot mode="TimeSeries" flip_y="false" style="StepsInv" flip_x="false">
+       <range bottom="-0.019189" left="0.000000" top="0.600000" right="283.794957"/>
+       <limitY max="0.6"/>
+       <curve color="#50aded" name="ape_hybrid_1"/>
+       <curve color="#ed5455" name="ape_laser_1"/>
+       <curve color="#34e352" name="ape_marker_1"/>
+       <curve color="#2a813d" name="ape_marker_3"/>
+       <curve color="#33ce37" name="ape_marker_2"/>
+       <curve color="#770e14" name="ape_laser_3"/>
+       <curve color="#d42126" name="ape_laser_2"/>
+       <curve color="#1a547c" name="ape_hybrid_3"/>
+       <curve color="#4d80ac" name="ape_hybrid_2"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -23,7 +29,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <Plugins>
   <plugin ID="DataLoad CSV">
-   <parameters time_axis="" delimiter="0"/>
+   <parameters delimiter="0" time_axis=""/>
   </plugin>
   <plugin ID="DataLoad MCAP"/>
   <plugin ID="DataLoad ROS bags">
@@ -58,17 +64,17 @@
  </Plugins>
  <!-- - - - - - - - - - - - - - - -->
  <previouslyLoaded_Datafiles>
-  <fileInfo prefix="car_el_hybrid_1" filename="../../rosbags/car_el_1/car_el_hybrid.bag">
+  <fileInfo filename="../../rosbags/car_el_3/car_el_hybrid.bag" prefix="car_el_hybrid_3">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
     <max_array_size value="100"/>
     <boolean_strings_to_number value="true"/>
     <remove_suffix_from_strings value="true"/>
-    <selected_topics value="/amcl_pose;/rectangle_detector/num_detections;/odom;/odom_gt"/>
+    <selected_topics value="/amcl_pose;/odom_gt;/odom;/rectangle_detector/num_detections"/>
    </plugin>
   </fileInfo>
-  <fileInfo prefix="car_el_laser_1" filename="../../rosbags/car_el_1/car_el_laser.bag">
+  <fileInfo filename="../../rosbags/car_el_3/car_el_laser.bag" prefix="car_el_laser_3">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -78,7 +84,67 @@
     <selected_topics value="/amcl_pose"/>
    </plugin>
   </fileInfo>
-  <fileInfo prefix="car_el_marker_1" filename="../../rosbags/car_el_1/car_el_marker.bag">
+  <fileInfo filename="../../rosbags/car_el_3/car_el_marker.bag" prefix="car_el_marker_3">
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+    <boolean_strings_to_number value="true"/>
+    <remove_suffix_from_strings value="true"/>
+    <selected_topics value="/amcl_pose"/>
+   </plugin>
+  </fileInfo>
+  <fileInfo filename="../../rosbags/car_el_2/car_el_hybrid.bag" prefix="car_el_hybrid_2">
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+    <boolean_strings_to_number value="true"/>
+    <remove_suffix_from_strings value="true"/>
+    <selected_topics value="/amcl_pose;/odom_gt;/odom;/rectangle_detector/num_detections"/>
+   </plugin>
+  </fileInfo>
+  <fileInfo filename="../../rosbags/car_el_2/car_el_laser.bag" prefix="car_el_laser_2">
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+    <boolean_strings_to_number value="true"/>
+    <remove_suffix_from_strings value="true"/>
+    <selected_topics value="/amcl_pose"/>
+   </plugin>
+  </fileInfo>
+  <fileInfo filename="../../rosbags/car_el_2/car_el_marker.bag" prefix="car_el_marker_2">
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+    <boolean_strings_to_number value="true"/>
+    <remove_suffix_from_strings value="true"/>
+    <selected_topics value="/amcl_pose"/>
+   </plugin>
+  </fileInfo>
+  <fileInfo filename="../../rosbags/car_el_1/car_el_hybrid.bag" prefix="car_el_hybrid_1">
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+    <boolean_strings_to_number value="true"/>
+    <remove_suffix_from_strings value="true"/>
+    <selected_topics value="/amcl_pose;/rectangle_detector/num_detections;/odom;/odom_gt"/>
+   </plugin>
+  </fileInfo>
+  <fileInfo filename="../../rosbags/car_el_1/car_el_laser.bag" prefix="car_el_laser_1">
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+    <boolean_strings_to_number value="true"/>
+    <remove_suffix_from_strings value="true"/>
+    <selected_topics value="/amcl_pose"/>
+   </plugin>
+  </fileInfo>
+  <fileInfo filename="../../rosbags/car_el_1/car_el_marker.bag" prefix="car_el_marker_1">
    <plugin ID="DataLoad ROS bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>
@@ -91,14 +157,6 @@
  </previouslyLoaded_Datafiles>
  <!-- - - - - - - - - - - - - - - -->
  <customMathEquations>
-  <snippet name="ape_marker_1">
-   <global></global>
-   <function>return math.abs(value-v1)</function>
-   <linked_source>car_el_marker_1/amcl_pose/pose/pose/position/x</linked_source>
-   <additional_sources>
-    <v1>car_el_hybrid_1/odom_gt/pose/pose/position/x</v1>
-   </additional_sources>
-  </snippet>
   <snippet name="ape_laser_1">
    <global></global>
    <function>return math.abs(value-v1)</function>
@@ -107,12 +165,68 @@
     <v1>car_el_hybrid_1/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
+  <snippet name="ape_marker_1">
+   <global></global>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_marker_1/amcl_pose/pose/pose/position/x</linked_source>
+   <additional_sources>
+    <v1>car_el_hybrid_1/odom_gt/pose/pose/position/x</v1>
+   </additional_sources>
+  </snippet>
+  <snippet name="ape_hybrid_2">
+   <global></global>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_hybrid_2/amcl_pose/pose/pose/position/x</linked_source>
+   <additional_sources>
+    <v1>car_el_hybrid_2/odom_gt/pose/pose/position/x</v1>
+   </additional_sources>
+  </snippet>
   <snippet name="ape_hybrid_1">
    <global></global>
    <function>return math.abs(value-v1)</function>
    <linked_source>car_el_hybrid_1/amcl_pose/pose/pose/position/x</linked_source>
    <additional_sources>
     <v1>car_el_hybrid_1/odom_gt/pose/pose/position/x</v1>
+   </additional_sources>
+  </snippet>
+  <snippet name="ape_laser_2">
+   <global></global>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_laser_2/amcl_pose/pose/pose/position/x</linked_source>
+   <additional_sources>
+    <v1>car_el_hybrid_2/odom_gt/pose/pose/position/x</v1>
+   </additional_sources>
+  </snippet>
+  <snippet name="ape_marker_2">
+   <global></global>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_marker_2/amcl_pose/pose/pose/position/x</linked_source>
+   <additional_sources>
+    <v1>car_el_hybrid_2/odom_gt/pose/pose/position/x</v1>
+   </additional_sources>
+  </snippet>
+  <snippet name="ape_hybrid_3">
+   <global></global>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_hybrid_3/amcl_pose/pose/pose/position/x</linked_source>
+   <additional_sources>
+    <v1>car_el_hybrid_3/odom_gt/pose/pose/position/x</v1>
+   </additional_sources>
+  </snippet>
+  <snippet name="ape_laser_3">
+   <global></global>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_laser_3/amcl_pose/pose/pose/position/x</linked_source>
+   <additional_sources>
+    <v1>car_el_hybrid_3/odom_gt/pose/pose/position/x</v1>
+   </additional_sources>
+  </snippet>
+  <snippet name="ape_marker_3">
+   <global></global>
+   <function>return math.abs(value-v1)</function>
+   <linked_source>car_el_marker_3/amcl_pose/pose/pose/position/x</linked_source>
+   <additional_sources>
+    <v1>car_el_hybrid_3/odom_gt/pose/pose/position/x</v1>
    </additional_sources>
   </snippet>
  </customMathEquations>
